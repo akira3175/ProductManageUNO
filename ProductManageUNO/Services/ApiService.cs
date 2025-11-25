@@ -5,7 +5,7 @@ namespace ProductManageUNO.Services;
 
 public interface IApiService
 {
-    Task<List<Product>> GetProductsAsync();
+    Task<List<Product>> GetProductsAsync(int page = 1, int pageSize = 10);
 }
 
 public class ApiService : IApiService
@@ -16,35 +16,32 @@ public class ApiService : IApiService
     {
         _httpClient = httpClient;
 
-        // --- CẤU HÌNH LẠI PORT (Quan trọng) ---
-        // Hãy kiểm tra cửa sổ Console của Backend để chắc chắn port là 5126
         var baseUrl = "http://localhost:5052";
 
-        // Android Emulator cần dùng IP 10.0.2.2 để trỏ về máy tính
 #if ANDROID
         baseUrl = "http://10.0.2.2:5052";
 #endif
         _httpClient.BaseAddress = new Uri(baseUrl);
-        _httpClient.Timeout = TimeSpan.FromSeconds(10); // Thêm timeout để không bị treo quá lâu
+        _httpClient.Timeout = TimeSpan.FromSeconds(30);
     }
 
-    public async Task<List<Product>> GetProductsAsync()
+    public async Task<List<Product>> GetProductsAsync(int page = 1, int pageSize = 10)
     {
         try
         {
-            // Endpoint API
-            var response = await _httpClient.GetFromJsonAsync<ApiResPagination<List<Product>>>("/api/Inventory?page=1&pageSize=50");
+            var response = await _httpClient.GetFromJsonAsync<ApiResPagination<List<Product>>>(
+                $"/api/Product?page={page}&pageSize={pageSize}");
 
             if (response is not null && response.Success)
             {
-                return response.Result;
+                return response.Result ?? new List<Product>();
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"API Error: {ex.Message}");
         }
-        // Trả về danh sách rỗng nếu lỗi, giúp tắt loading indicator
+
         return new List<Product>();
     }
 }

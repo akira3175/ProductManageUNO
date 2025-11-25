@@ -16,9 +16,18 @@ public partial class MainModel : ObservableObject
     [ObservableProperty]
     private bool _isLoading;
 
-    public ObservableCollection<Product> Products { get; } = new();
+    [ObservableProperty]
+    private string _searchText = string.Empty;
 
-    // Inject IApiService vào Constructor
+    [ObservableProperty]
+    private int _currentPage = 1;
+
+    [ObservableProperty]
+    private int _totalItems = 0;
+
+    public ObservableCollection<Product> Products { get; } = new();
+    private List<Product> _allProducts = new();
+
     public MainModel(IApiService apiService)
     {
         _apiService = apiService;
@@ -31,14 +40,58 @@ public partial class MainModel : ObservableObject
         if (IsLoading) return;
         IsLoading = true;
 
-        var data = await _apiService.GetProductsAsync();
-
-        Products.Clear();
-        foreach (var item in data)
+        try
         {
-            Products.Add(item);
-        }
+            var data = await _apiService.GetProductsAsync(CurrentPage, 50);
+            _allProducts = data;
 
-        IsLoading = false;
+            Products.Clear();
+            foreach (var item in data)
+            {
+                Products.Add(item);
+            }
+
+            TotalItems = data.Count;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Load Error: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private void Search()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            Products.Clear();
+            foreach (var item in _allProducts)
+            {
+                Products.Add(item);
+            }
+        }
+        else
+        {
+            var filtered = _allProducts
+                .Where(p => p.ProductName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                           p.Barcode.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                           p.Category?.CategoryName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
+            Products.Clear();
+            foreach (var item in filtered)
+            {
+                Products.Add(item);
+            }
+        }
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        SearchCommand.Execute(null);
     }
 }
