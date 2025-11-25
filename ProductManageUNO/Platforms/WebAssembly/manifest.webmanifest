@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "ProductManageUNO",
+  "display": "standalone",
+  "name": "ProductManageUNO",
+  "short_name": "ProductManageUNO",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}
