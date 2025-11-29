@@ -29,14 +29,21 @@
                           Foreground="{ThemeResource OnPrimaryBrush}"/>
             </StackPanel>
 
-            <Button Grid.Column="1"
-                    Command="{Binding LoadDataCommand}"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    VerticalAlignment="Center"
-                    ToolTipService.ToolTip="Tải lại">
-                <SymbolIcon Symbol="Refresh" Foreground="{ThemeResource OnPrimaryBrush}"/>
-            </Button>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                <!-- Loading indicator nhỏ trong header -->
+                <ProgressRing IsActive="{Binding IsLoading}" 
+                              Width="24" 
+                              Height="24"
+                              Foreground="{ThemeResource OnPrimaryBrush}"/>
+
+                <Button Command="{Binding LoadDataCommand}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        VerticalAlignment="Center"
+                        ToolTipService.ToolTip="Tải lại">
+                    <SymbolIcon Symbol="Refresh" Foreground="{ThemeResource OnPrimaryBrush}"/>
+                </Button>
+            </StackPanel>
         </Grid>
 
         <!-- Search Box -->
@@ -50,132 +57,111 @@
                      FontSize="14"/>
         </Grid>
 
-        <!-- Content Area with Loading Overlay -->
-        <Grid Grid.Row="2">
-            <!-- Product ListView - Hiện khi KHÔNG loading -->
-            <ListView x:Name="ProductListView"
-                      ItemsSource="{Binding Products}" 
-                      Padding="12,8"
-                      SelectionMode="None"
-                      IsItemClickEnabled="True">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Product">
-                        <Grid Background="{ThemeResource SurfaceBrush}" 
-                              CornerRadius="12" 
-                              Margin="4,6"
-                              Padding="16,12"
-                              BorderBrush="{ThemeResource OutlineVariantBrush}"
-                              BorderThickness="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+        <!-- Product ListView - KHÔNG CÓ LOADING OVERLAY -->
+        <ListView Grid.Row="2"
+                  ItemsSource="{Binding Products}" 
+                  Padding="12,8"
+                  SelectionMode="None"
+                  IsItemClickEnabled="True">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:Product">
+                    <Grid Background="{ThemeResource SurfaceBrush}" 
+                          CornerRadius="12" 
+                          Margin="4,6"
+                          Padding="16,12"
+                          BorderBrush="{ThemeResource OutlineVariantBrush}"
+                          BorderThickness="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0" Spacing="6">
-                                <TextBlock Text="{x:Bind ProductName}" 
-                                          Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                          FontSize="16"
-                                          Foreground="{ThemeResource OnSurfaceBrush}"
-                                          TextWrapping="Wrap"/>
-
-                                <Border Background="{ThemeResource SecondaryContainerBrush}"
-                                       CornerRadius="4"
-                                       Padding="8,4"
-                                       HorizontalAlignment="Left">
-                                    <TextBlock Text="{x:Bind Category.CategoryName}" 
-                                              FontSize="11"
-                                              FontWeight="SemiBold"
-                                              Foreground="{ThemeResource OnSecondaryContainerBrush}"/>
-                                </Border>
-
-                                <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="12" RowSpacing="4">
-                                    <FontIcon Grid.Column="0" 
-                                              Glyph="&#xE1E0;" 
-                                              FontSize="12" 
-                                              Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
-
-                                    <TextBlock Grid.Column="1" 
-                                              Text="{x:Bind Barcode}" 
-                                              FontSize="12"
-                                              Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
-
-                                    <FontIcon Grid.Column="2" 
-                                             Glyph="&#xE7C3;"
-                                             FontSize="12"
-                                             Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
-                                    <TextBlock Grid.Column="3" 
-                                              Text="{x:Bind Unit}" 
-                                              FontSize="12"
-                                              Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
-                                </Grid>
-
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE716;" FontSize="12"
-                                             Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
-                                    <TextBlock Text="{x:Bind Supplier.Name}" 
-                                              FontSize="11"
-                                              Foreground="{ThemeResource OnSurfaceVariantBrush}"
-                                              TextTrimming="CharacterEllipsis"
-                                              MaxLines="1"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <Border Grid.Column="1" 
-                                   Background="{ThemeResource TertiaryContainerBrush}"
-                                   CornerRadius="8"
-                                   Padding="12,8"
-                                   VerticalAlignment="Center"
-                                   MinWidth="100">
-                                <StackPanel HorizontalAlignment="Center" Spacing="2">
-                                    <TextBlock Text="{Binding Price, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:N0}'}" 
-                                              FontSize="18"
-                                              FontWeight="Bold"
-                                              Foreground="{ThemeResource OnTertiaryContainerBrush}"
-                                              HorizontalAlignment="Center"/>
-                                    <TextBlock Text="VNĐ" 
-                                              FontSize="10"
-                                              Foreground="{ThemeResource OnTertiaryContainerBrush}"
-                                              HorizontalAlignment="Center"
-                                              Opacity="0.8"/>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-
-                <ListView.Footer>
-                    <Grid Height="200" Visibility="{Binding Products.Count, Converter={StaticResource EmptyToVisibilityConverter}}">
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
-                            <FontIcon Glyph="&#xE7C4;" FontSize="48" Foreground="{ThemeResource OnSurfaceVariantBrush}" Opacity="0.5"/>
-                            <TextBlock Text="Không tìm thấy sản phẩm" 
+                        <StackPanel Grid.Column="0" Spacing="6">
+                            <TextBlock Text="{x:Bind ProductName}" 
+                                      Style="{ThemeResource BodyStrongTextBlockStyle}"
                                       FontSize="16"
-                                      Foreground="{ThemeResource OnSurfaceVariantBrush}"
-                                      HorizontalAlignment="Center"/>
-                            <Button Content="Tải lại" 
-                                   Command="{Binding LoadDataCommand}"
-                                   Style="{ThemeResource AccentButtonStyle}"/>
-                        </StackPanel>
-                    </Grid>
-                </ListView.Footer>
-            </ListView>
+                                      Foreground="{ThemeResource OnSurfaceBrush}"
+                                      TextWrapping="Wrap"/>
 
-            <!-- Loading Overlay - Hiện khi loading -->
-            <Border x:Name="LoadingOverlay"
-                    Background="#F0FFFFFF" 
-                    Visibility="Collapsed">
-                <StackPanel HorizontalAlignment="Center" 
-                           VerticalAlignment="Center"
-                           Spacing="16">
-                    <ProgressRing IsActive="{Binding ShowLoadingUI}" 
-                                  Width="60" 
-                                  Height="60"
-                                  Foreground="{ThemeResource PrimaryBrush}"/>
-                    <TextBlock Text="Đang tải dữ liệu..."
-                              FontSize="14"
-                              Foreground="#666666"
-                              HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Border>
-        </Grid>
+                            <Border Background="{ThemeResource SecondaryContainerBrush}"
+                                   CornerRadius="4"
+                                   Padding="8,4"
+                                   HorizontalAlignment="Left">
+                                <TextBlock Text="{x:Bind Category.CategoryName}" 
+                                          FontSize="11"
+                                          FontWeight="SemiBold"
+                                          Foreground="{ThemeResource OnSecondaryContainerBrush}"/>
+                            </Border>
+
+                            <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="12" RowSpacing="4">
+                                <FontIcon Grid.Column="0" 
+                                          Glyph="&#xE1E0;" 
+                                          FontSize="12" 
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+
+                                <TextBlock Grid.Column="1" 
+                                          Text="{x:Bind Barcode}" 
+                                          FontSize="12"
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+
+                                <FontIcon Grid.Column="2" 
+                                         Glyph="&#xE7C3;"
+                                         FontSize="12"
+                                         Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                <TextBlock Grid.Column="3" 
+                                          Text="{x:Bind Unit}" 
+                                          FontSize="12"
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE716;" FontSize="12"
+                                         Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                <TextBlock Text="{x:Bind Supplier.Name}" 
+                                          FontSize="11"
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                                          TextTrimming="CharacterEllipsis"
+                                          MaxLines="1"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Border Grid.Column="1" 
+                               Background="{ThemeResource TertiaryContainerBrush}"
+                               CornerRadius="8"
+                               Padding="12,8"
+                               VerticalAlignment="Center"
+                               MinWidth="100">
+                            <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                <TextBlock Text="{Binding Price, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:N0}'}" 
+                                          FontSize="18"
+                                          FontWeight="Bold"
+                                          Foreground="{ThemeResource OnTertiaryContainerBrush}"
+                                          HorizontalAlignment="Center"/>
+                                <TextBlock Text="VNĐ" 
+                                          FontSize="10"
+                                          Foreground="{ThemeResource OnTertiaryContainerBrush}"
+                                          HorizontalAlignment="Center"
+                                          Opacity="0.8"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+            <ListView.Footer>
+                <Grid Height="200" Visibility="{Binding Products.Count, Converter={StaticResource EmptyToVisibilityConverter}}">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                        <FontIcon Glyph="&#xE7C4;" FontSize="48" Foreground="{ThemeResource OnSurfaceVariantBrush}" Opacity="0.5"/>
+                        <TextBlock Text="Không tìm thấy sản phẩm" 
+                                  FontSize="16"
+                                  Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                                  HorizontalAlignment="Center"/>
+                        <Button Content="Tải lại" 
+                               Command="{Binding LoadDataCommand}"
+                               Style="{ThemeResource AccentButtonStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </ListView.Footer>
+        </ListView>
     </Grid>
 </Page>
