@@ -20,6 +20,8 @@ public sealed partial class MainPage : Page
         // Đăng ký converter
         Resources["EmptyToVisibilityConverter"] = new EmptyToVisibilityConverter();
         Resources["StringFormatConverter"] = new StringFormatConverter();
+        Resources["BoolToVisibilityConverter"] = new BoolToVisibilityConverter();
+        Resources["BoolToVisibilityInverseConverter"] = new BoolToVisibilityInverseConverter();
     }
 }
 
@@ -41,7 +43,7 @@ public class EmptyToVisibilityConverter : IValueConverter
     }
 }
 
-// --- Converter MỚI để sửa lỗi StringFormat ---
+// Converter để format chuỗi
 public class StringFormatConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -55,4 +57,56 @@ public class StringFormatConverter : IValueConverter
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) => throw new NotImplementedException();
+}
+
+// Converter bool -> Visibility
+public class BoolToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var result = Visibility.Collapsed;
+
+        if (value is bool boolValue)
+        {
+            result = boolValue ? Visibility.Visible : Visibility.Collapsed;
+            System.Diagnostics.Debug.WriteLine($"BoolToVisibilityConverter: {boolValue} -> {result}");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"BoolToVisibilityConverter: Invalid value type: {value?.GetType().Name ?? "null"}");
+        }
+
+        return result;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+// Converter bool -> Visibility (Inverse)
+public class BoolToVisibilityInverseConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var result = Visibility.Visible;
+
+        if (value is bool boolValue)
+        {
+            result = boolValue ? Visibility.Collapsed : Visibility.Visible;
+            System.Diagnostics.Debug.WriteLine($"BoolToVisibilityInverseConverter: {boolValue} -> {result}");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"BoolToVisibilityInverseConverter: Invalid value type: {value?.GetType().Name ?? "null"}");
+        }
+
+        return result;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
 }
