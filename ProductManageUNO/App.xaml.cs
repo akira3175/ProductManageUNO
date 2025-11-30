@@ -1,4 +1,5 @@
 using ProductManageUNO.Services;
+using SQLitePCL;
 
 namespace ProductManageUNO;
 public partial class App : Application
@@ -10,6 +11,7 @@ public partial class App : Application
     public App()
     {
         this.InitializeComponent();
+        SQLitePCL.Batteries_V2.Init();
     }
 
     protected Window? MainWindow { get; private set; }
@@ -18,62 +20,34 @@ public partial class App : Application
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            // Add navigation support for toolkit controls such as TabBar and NavigationView
             .UseToolkitNavigation()
             .Configure(host => host
 #if DEBUG
-                // Switch to Development environment when running in DEBUG
                 .UseEnvironment(Environments.Development)
 #endif
                 .UseLogging(configure: (context, logBuilder) =>
                 {
-                    // Configure log levels for different categories of logging
                     logBuilder
                         .SetMinimumLevel(
                             context.HostingEnvironment.IsDevelopment() ?
                                 LogLevel.Information :
                                 LogLevel.Warning)
-
-                        // Default filters for core Uno Platform namespaces
                         .CoreLogLevel(LogLevel.Warning);
-
-                    // Uno Platform namespace filter groups
-                    // Uncomment individual methods to see more detailed logging
-                    //// Generic Xaml events
-                    //logBuilder.XamlLogLevel(LogLevel.Debug);
-                    //// Layout specific messages
-                    //logBuilder.XamlLayoutLogLevel(LogLevel.Debug);
-                    //// Storage messages
-                    //logBuilder.StorageLogLevel(LogLevel.Debug);
-                    //// Binding related messages
-                    //logBuilder.XamlBindingLogLevel(LogLevel.Debug);
-                    //// Binder memory references tracking
-                    //logBuilder.BinderMemoryReferenceLogLevel(LogLevel.Debug);
-                    //// DevServer and HotReload related
-                    //logBuilder.HotReloadCoreLogLevel(LogLevel.Information);
-                    //// Debug JS interop
-                    //logBuilder.WebAssemblyLogLevel(LogLevel.Debug);
-
                 }, enableUnoLogging: true)
                 .UseConfiguration(configure: configBuilder =>
                     configBuilder
                         .EmbeddedSource<App>()
                         .Section<AppConfig>()
                 )
-                // Enable localization (see appsettings.json for supported languages)
                 .UseLocalization()
                 .UseHttp((context, services) =>
                 {
 #if DEBUG
-                    // DelegatingHandler will be automatically injected
                     services.AddTransient<DelegatingHandler, DebugHttpHandler>();
 #endif
-
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    // TODO: Register your services
-                    //services.AddSingleton<IMyService, MyService>();
                     services.AddTransient<IApiService, ApiService>();
                     services.AddHttpClient<ApiService>();
                     services.AddTransient<ICartService, CartService>();
@@ -84,6 +58,7 @@ public partial class App : Application
                 })
                 .UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
             );
+
         MainWindow = builder.Window;
 
 #if DEBUG
@@ -91,7 +66,24 @@ public partial class App : Application
 #endif
         MainWindow.SetWindowIcon();
 
+        // ✅ Build host trước
         Host = await builder.NavigateAsync<Shell>();
+
+        // ✅ SAU ĐÓ mới khởi tạo database
+        try
+        {
+            if (Host?.Services != null)
+            {
+                using var scope = Host.Services.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<Data.AppDbContext>();
+                await dbContext.Database.EnsureCreatedAsync();
+                Console.WriteLine("✅ Database initialized successfully");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Database initialization error: {ex.Message}");
+        }
     }
 
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)

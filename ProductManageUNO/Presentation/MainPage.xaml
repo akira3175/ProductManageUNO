@@ -12,7 +12,7 @@
 
     <Grid RowDefinitions="Auto, Auto, *">
         <!-- Header -->
-        <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="16,12">
+        <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="20,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -195,6 +195,7 @@
                                 <!-- Add to Cart Button -->
                                 <Button Command="{Binding DataContext.AddToCartCommand, ElementName=PageRoot}"
                                        CommandParameter="{x:Bind}"
+                                       Click="AddToCartButton_Click"
                                        Background="{ThemeResource PrimaryBrush}"
                                        Foreground="{ThemeResource OnPrimaryBrush}"
                                        CornerRadius="8"

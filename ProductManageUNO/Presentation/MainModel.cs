@@ -119,6 +119,7 @@ public partial class MainModel : ObservableObject
         try
         {
             Console.WriteLine($"🔵 Adding to cart: {product.ProductName}");
+            Console.WriteLine($"🔵 Product ID: {product.Id}, Price: {product.Price}");
 
             var cartItem = new CartItem
             {
@@ -131,12 +132,15 @@ public partial class MainModel : ObservableObject
                 AddedAt = DateTime.Now
             };
 
+            Console.WriteLine($"🔵 Calling CartService.AddToCartAsync...");
             var success = await _cartService.AddToCartAsync(cartItem);
+
+            Console.WriteLine($"🔵 AddToCartAsync result: {success}");
 
             if (success)
             {
                 await UpdateCartCountAsync();
-                Console.WriteLine("✅ Added to cart successfully");
+                Console.WriteLine($"✅ Cart count updated: {CartItemCount}");
             }
             else
             {
@@ -146,6 +150,7 @@ public partial class MainModel : ObservableObject
         catch (Exception ex)
         {
             Console.WriteLine($"❌ AddToCart Error: {ex.Message}");
+            Console.WriteLine($"❌ Stack trace: {ex.StackTrace}");
         }
     }
 

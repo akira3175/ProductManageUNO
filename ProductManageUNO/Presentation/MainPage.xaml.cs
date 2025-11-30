@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using ProductManageUNO.Models;
 using System;
+using Microsoft.Extensions.DependencyInjection; // ✅ THÊM DÒNG NÀY
 
 namespace ProductManageUNO.Presentation;
 
@@ -19,17 +20,93 @@ public sealed partial class MainPage : Page
         Resources["EmptyToVisibilityConverter"] = new EmptyToVisibilityConverter();
         Resources["StringFormatConverter"] = new StringFormatConverter();
         Resources["CountToVisibilityConverter"] = new CountToVisibilityConverter();
+
+        Console.WriteLine("🔵 MainPage Constructor");
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        Console.WriteLine("🔵 OnNavigatedTo called");
 
-        // Kết nối ViewModel
-        if (Application.Current is App app && app.Host != null)
+        // ✅ SỬA LẠI CÁCH LẤY SERVICE
+        try
         {
-            _viewModel = app.Host.Services.GetService(typeof(MainModel)) as MainModel;
-            DataContext = _viewModel;
+            if (Application.Current is App app && app.Host != null)
+            {
+                Console.WriteLine("🔵 App.Host found");
+                _viewModel = app.Host.Services.GetService<MainModel>();
+
+                if (_viewModel != null)
+                {
+                    DataContext = _viewModel;
+                    Console.WriteLine("✅ ViewModel set successfully");
+                }
+                else
+                {
+                    Console.WriteLine("❌ Failed to get MainModel from services");
+                }
+            }
+            else
+            {
+                Console.WriteLine("❌ App.Host is null");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ OnNavigatedTo Error: {ex.Message}");
+        }
+    }
+
+    private async void AddToCartButton_Click(object sender, RoutedEventArgs e)
+    {
+        Console.WriteLine("🔵 AddToCartButton_Click - FIRED!");
+        Console.WriteLine($"🔵 ViewModel status: {_viewModel != null}");
+
+        if (sender is Button button)
+        {
+            Console.WriteLine($"🔵 Button found, checking CommandParameter...");
+
+            var product = button.CommandParameter as Product;
+
+            if (product != null)
+            {
+                Console.WriteLine($"🔵 Product found: {product.ProductName}");
+
+                if (_viewModel != null)
+                {
+                    Console.WriteLine("🔵 ViewModel is available, calling AddToCartCommand");
+                    try
+                    {
+                        await _viewModel.AddToCartCommand.ExecuteAsync(product);
+                        Console.WriteLine("✅ AddToCartCommand executed");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"❌ AddToCartCommand error: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("❌ ViewModel is NULL!");
+
+                    // ✅ FALLBACK: Thử lấy lại ViewModel
+                    if (Application.Current is App app && app.Host != null)
+                    {
+                        _viewModel = app.Host.Services.GetService<MainModel>();
+                        if (_viewModel != null)
+                        {
+                            DataContext = _viewModel;
+                            await _viewModel.AddToCartCommand.ExecuteAsync(product);
+                            Console.WriteLine("✅ ViewModel recovered and command executed");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("❌ CommandParameter is not a Product!");
+            }
         }
     }
 
