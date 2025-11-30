@@ -9,6 +9,7 @@ namespace ProductManageUNO.Presentation;
 public partial class MainModel : ObservableObject
 {
     private readonly IApiService _apiService;
+    private readonly ICartService _cartService;
 
     [ObservableProperty]
     private string _title = "Danh Sách Sản Phẩm";
@@ -25,14 +26,19 @@ public partial class MainModel : ObservableObject
     [ObservableProperty]
     private int _totalItems = 0;
 
+    [ObservableProperty]
+    private int _cartItemCount = 0;
+
     public ObservableCollection<Product> Products { get; } = new();
     private List<Product> _allProducts = new();
 
-    public MainModel(IApiService apiService)
+    public MainModel(IApiService apiService, ICartService cartService)
     {
         _apiService = apiService;
+        _cartService = cartService;
         Console.WriteLine("🔵 MainModel Constructor");
         _ = LoadDataAsync();
+        _ = UpdateCartCountAsync();
     }
 
     [RelayCommand]
@@ -104,6 +110,55 @@ public partial class MainModel : ObservableObject
             {
                 Products.Add(item);
             }
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddToCart(Product product)
+    {
+        try
+        {
+            Console.WriteLine($"🔵 Adding to cart: {product.ProductName}");
+
+            var cartItem = new CartItem
+            {
+                ProductId = product.Id,
+                ProductName = product.ProductName,
+                Barcode = product.Barcode,
+                Unit = product.Unit,
+                Price = product.Price,
+                Quantity = 1,
+                AddedAt = DateTime.Now
+            };
+
+            var success = await _cartService.AddToCartAsync(cartItem);
+
+            if (success)
+            {
+                await UpdateCartCountAsync();
+                Console.WriteLine("✅ Added to cart successfully");
+            }
+            else
+            {
+                Console.WriteLine("❌ Failed to add to cart");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ AddToCart Error: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateCartCountAsync()
+    {
+        try
+        {
+            CartItemCount = await _cartService.GetTotalItemsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ UpdateCartCount Error: {ex.Message}");
+            CartItemCount = 0;
         }
     }
 

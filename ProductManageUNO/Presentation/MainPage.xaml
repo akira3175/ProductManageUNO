@@ -7,6 +7,7 @@
     xmlns:local="using:ProductManageUNO.Presentation"
     xmlns:models="using:ProductManageUNO.Models"
     mc:Ignorable="d"
+    x:Name="PageRoot"
     Background="{ThemeResource BackgroundBrush}">
 
     <Grid RowDefinitions="Auto, Auto, *">
@@ -42,6 +43,34 @@
                         ToolTipService.ToolTip="Tải lại">
                     <SymbolIcon Symbol="Refresh" Foreground="{ThemeResource OnPrimaryBrush}"/>
                 </Button>
+
+                <!-- Cart Button -->
+                <Button Background="Transparent"
+                        BorderThickness="0"
+                        VerticalAlignment="Center"
+                        Click="CartButton_Click"
+                        ToolTipService.ToolTip="Giỏ hàng">
+                    <Grid>
+                        <SymbolIcon Symbol="Shop" Foreground="{ThemeResource OnPrimaryBrush}"/>
+                        <!-- Cart Badge -->
+                        <Border Background="{ThemeResource ErrorColor}"
+                               CornerRadius="10"
+                               MinWidth="20"
+                               Height="20"
+                               Padding="4,0"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top"
+                               Margin="0,-8,-8,0"
+                               Visibility="{Binding CartItemCount, Converter={StaticResource CountToVisibilityConverter}}">
+                            <TextBlock Text="{Binding CartItemCount}"
+                                      FontSize="10"
+                                      FontWeight="Bold"
+                                      Foreground="White"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -56,14 +85,13 @@
                      FontSize="14"/>
         </Grid>
 
-        <!-- Product ListView với ItemClick -->
+        <!-- Product ListView -->
         <ListView Grid.Row="2"
                   x:Name="ProductListView"
                   ItemsSource="{Binding Products}" 
                   Padding="12,8"
                   SelectionMode="None"
-                  IsItemClickEnabled="True"
-                  ItemClick="ProductListView_ItemClick">
+                  IsItemClickEnabled="False">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -74,86 +102,113 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
-                    <Grid Background="{ThemeResource SurfaceBrush}" 
-                          CornerRadius="12" 
-                          Margin="4,6"
-                          Padding="16,12"
-                          BorderBrush="{ThemeResource OutlineVariantBrush}"
-                          BorderThickness="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                    <Border Background="{ThemeResource SurfaceBrush}" 
+                            CornerRadius="12" 
+                            Margin="4,6"
+                            Padding="16,12"
+                            BorderBrush="{ThemeResource OutlineVariantBrush}"
+                            BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" Spacing="6">
-                            <TextBlock Text="{x:Bind ProductName}" 
-                                      Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                      FontSize="16"
-                                      Foreground="{ThemeResource OnSurfaceBrush}"
-                                      TextWrapping="Wrap"/>
+                            <!-- Product Info - Clickable -->
+                            <Grid Grid.Column="0" 
+                                  Background="Transparent"
+                                  Tapped="ProductInfo_Tapped"
+                                  Tag="{x:Bind Id}">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="{x:Bind ProductName}" 
+                                              Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                              FontSize="16"
+                                              Foreground="{ThemeResource OnSurfaceBrush}"
+                                              TextWrapping="Wrap"/>
 
-                            <Border Background="{ThemeResource SecondaryContainerBrush}"
-                                   CornerRadius="4"
-                                   Padding="8,4"
-                                   HorizontalAlignment="Left">
-                                <TextBlock Text="{x:Bind Category.CategoryName}" 
-                                          FontSize="11"
-                                          FontWeight="SemiBold"
-                                          Foreground="{ThemeResource OnSecondaryContainerBrush}"/>
-                            </Border>
+                                    <Border Background="{ThemeResource SecondaryContainerBrush}"
+                                           CornerRadius="4"
+                                           Padding="8,4"
+                                           HorizontalAlignment="Left">
+                                        <TextBlock Text="{x:Bind Category.CategoryName}" 
+                                                  FontSize="11"
+                                                  FontWeight="SemiBold"
+                                                  Foreground="{ThemeResource OnSecondaryContainerBrush}"/>
+                                    </Border>
 
-                            <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="12" RowSpacing="4">
-                                <FontIcon Grid.Column="0" 
-                                          Glyph="&#xE1E0;" 
-                                          FontSize="12" 
-                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="12" RowSpacing="4">
+                                        <FontIcon Grid.Column="0" 
+                                                  Glyph="&#xE1E0;" 
+                                                  FontSize="12" 
+                                                  Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
 
-                                <TextBlock Grid.Column="1" 
-                                          Text="{x:Bind Barcode}" 
-                                          FontSize="12"
-                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                        <TextBlock Grid.Column="1" 
+                                                  Text="{x:Bind Barcode}" 
+                                                  FontSize="12"
+                                                  Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
 
-                                <FontIcon Grid.Column="2" 
-                                         Glyph="&#xE7C3;"
-                                         FontSize="12"
-                                         Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
-                                <TextBlock Grid.Column="3" 
-                                          Text="{x:Bind Unit}" 
-                                          FontSize="12"
-                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                        <FontIcon Grid.Column="2" 
+                                                 Glyph="&#xE7C3;"
+                                                 FontSize="12"
+                                                 Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                        <TextBlock Grid.Column="3" 
+                                                  Text="{x:Bind Unit}" 
+                                                  FontSize="12"
+                                                  Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                    </Grid>
+
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE716;" FontSize="12"
+                                                 Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                        <TextBlock Text="{x:Bind Supplier.Name}" 
+                                                  FontSize="11"
+                                                  Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                                                  TextTrimming="CharacterEllipsis"
+                                                  MaxLines="1"/>
+                                    </StackPanel>
+                                </StackPanel>
                             </Grid>
 
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE716;" FontSize="12"
-                                         Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
-                                <TextBlock Text="{x:Bind Supplier.Name}" 
-                                          FontSize="11"
-                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
-                                          TextTrimming="CharacterEllipsis"
-                                          MaxLines="1"/>
-                            </StackPanel>
-                        </StackPanel>
+                            <!-- Right Side: Price and Add Button -->
+                            <StackPanel Grid.Column="1" 
+                                       Spacing="8"
+                                       VerticalAlignment="Center">
+                                <!-- Price -->
+                                <Border Background="{ThemeResource TertiaryContainerBrush}"
+                                       CornerRadius="8"
+                                       Padding="12,8"
+                                       MinWidth="100">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="{Binding Price, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:N0}'}" 
+                                                  FontSize="16"
+                                                  FontWeight="Bold"
+                                                  Foreground="{ThemeResource OnTertiaryContainerBrush}"
+                                                  HorizontalAlignment="Center"/>
+                                        <TextBlock Text="VNĐ" 
+                                                  FontSize="10"
+                                                  Foreground="{ThemeResource OnTertiaryContainerBrush}"
+                                                  HorizontalAlignment="Center"
+                                                  Opacity="0.8"/>
+                                    </StackPanel>
+                                </Border>
 
-                        <Border Grid.Column="1" 
-                               Background="{ThemeResource TertiaryContainerBrush}"
-                               CornerRadius="8"
-                               Padding="12,8"
-                               VerticalAlignment="Center"
-                               MinWidth="100">
-                            <StackPanel HorizontalAlignment="Center" Spacing="2">
-                                <TextBlock Text="{Binding Price, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:N0}'}" 
-                                          FontSize="18"
-                                          FontWeight="Bold"
-                                          Foreground="{ThemeResource OnTertiaryContainerBrush}"
-                                          HorizontalAlignment="Center"/>
-                                <TextBlock Text="VNĐ" 
-                                          FontSize="10"
-                                          Foreground="{ThemeResource OnTertiaryContainerBrush}"
-                                          HorizontalAlignment="Center"
-                                          Opacity="0.8"/>
+                                <!-- Add to Cart Button -->
+                                <Button Command="{Binding DataContext.AddToCartCommand, ElementName=PageRoot}"
+                                       CommandParameter="{x:Bind}"
+                                       Background="{ThemeResource PrimaryBrush}"
+                                       Foreground="{ThemeResource OnPrimaryBrush}"
+                                       CornerRadius="8"
+                                       Padding="16,8"
+                                       HorizontalAlignment="Stretch"
+                                       ToolTipService.ToolTip="Thêm vào giỏ">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE7BF;" FontSize="16"/>
+                                        <TextBlock Text="Thêm" FontSize="13" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Button>
                             </StackPanel>
-                        </Border>
-                    </Grid>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
 

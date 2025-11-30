@@ -4,9 +4,37 @@ public class CartItem
 {
     public int Id { get; set; }
     public int ProductId { get; set; }
-    public string ProductName { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public string Barcode { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int Quantity { get; set; }
+    public string Unit { get; set; } = string.Empty;
+    public DateTime AddedAt { get; set; } = DateTime.Now;
+
+    // Calculated property
+    public decimal Subtotal => Price * Quantity;
+}
+
+// DTO cho việc tạo Order
+public class CreateOrderRequest
+{
+    public int CustomerId { get; set; }
+    public int UserId { get; set; }
+    public int PromotionId { get; set; }
+    public DateTime OrderDate { get; set; } = DateTime.Now;
+    public string Status { get; set; } = "Pending";
+    public decimal TotalAmount { get; set; }
+    public decimal DiscountAmount { get; set; }
+    public List<OrderItemDto> Items { get; set; } = new();
+}
+
+public class OrderItemDto
+{
+    public int Id { get; set; }
+    public int ProductId { get; set; }
+    public int Quantity { get; set; }
+    public decimal Price { get; set; }
+    public decimal Subtotal { get; set; }
 }
 
 public class Product

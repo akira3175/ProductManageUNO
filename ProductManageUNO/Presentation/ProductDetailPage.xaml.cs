@@ -32,7 +32,7 @@ public sealed partial class ProductDetailPage : Page
         if (Application.Current is App app && app.Host != null)
         {
             ViewModel = app.Host.Services.GetService(typeof(ProductDetailModel)) as ProductDetailModel;
-            
+
             if (ViewModel == null)
             {
                 Console.WriteLine("❌ ViewModel is null!");
@@ -72,91 +72,5 @@ public sealed partial class ProductDetailPage : Page
         {
             await ViewModel.LoadProductAsync(_currentProductId);
         }
-    }
-}
-
-// Converter để kiểm tra null
-public class NullToVisibilityConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        return value != null ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-// Converter để kiểm tra string not empty
-public class StringNotEmptyToVisibilityConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        return !string.IsNullOrEmpty(value as string) ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-// Converter bool to visibility
-public class BoolToVisibilityConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        return value is bool b && b ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-// Converter format giá
-public class PriceFormatConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is decimal price)
-        {
-            return price.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"));
-        }
-        if (value is double priceDouble)
-        {
-            return priceDouble.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"));
-        }
-        if (value is int priceInt)
-        {
-            return priceInt.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"));
-        }
-        return "0";
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-// Converter format date
-public class DateFormatConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is DateTime date)
-        {
-            return $"Ngày tạo: {date:dd/MM/yyyy HH:mm}";
-        }
-        return "Ngày tạo: N/A";
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
     }
 }
