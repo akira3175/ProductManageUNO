@@ -38,6 +38,7 @@ public class Supplier
     public string Address { get; set; }
 }
 
+// Response cho danh sách (pagination)
 public class ApiResPagination<T>
 {
     public bool Success { get; set; }
@@ -45,6 +46,15 @@ public class ApiResPagination<T>
     public string Message { get; set; }
     public T Result { get; set; }
     public MetaData Meta { get; set; }
+}
+
+// Response cho single item
+public class ApiResDetail<T>
+{
+    public bool Success { get; set; }
+    public int Status { get; set; }
+    public string Message { get; set; }
+    public T Data { get; set; }
 }
 
 public class MetaData

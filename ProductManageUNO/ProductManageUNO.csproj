@@ -34,4 +34,14 @@
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
     </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Presentation\ProductDetailPage.xaml.cs">
+        <DependentUpon>ProductDetailPage.xaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Presentation\ProductDetailPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
 </Project>

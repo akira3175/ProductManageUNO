@@ -30,7 +30,6 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                <!-- Loading indicator nhỏ trong header -->
                 <ProgressRing IsActive="{Binding IsLoading}" 
                               Width="24" 
                               Height="24"
@@ -57,12 +56,22 @@
                      FontSize="14"/>
         </Grid>
 
-        <!-- Product ListView - KHÔNG CÓ LOADING OVERLAY -->
+        <!-- Product ListView với ItemClick -->
         <ListView Grid.Row="2"
+                  x:Name="ProductListView"
                   ItemsSource="{Binding Products}" 
                   Padding="12,8"
                   SelectionMode="None"
-                  IsItemClickEnabled="True">
+                  IsItemClickEnabled="True"
+                  ItemClick="ProductListView_ItemClick">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
                     <Grid Background="{ThemeResource SurfaceBrush}" 

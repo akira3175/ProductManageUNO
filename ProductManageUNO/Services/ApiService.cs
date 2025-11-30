@@ -6,6 +6,7 @@ namespace ProductManageUNO.Services;
 public interface IApiService
 {
     Task<List<Product>> GetProductsAsync(int page = 1, int pageSize = 10);
+    Task<Product?> GetProductByIdAsync(int id);
 }
 
 public class ApiService : IApiService
@@ -43,5 +44,25 @@ public class ApiService : IApiService
         }
 
         return new List<Product>();
+    }
+
+    public async Task<Product?> GetProductByIdAsync(int id)
+    {
+        try
+        {
+            var response = await _httpClient.GetFromJsonAsync<ApiResDetail<Product>>(
+                $"/api/Product/{id}");
+
+            if (response is not null && response.Success)
+            {
+                return response.Data;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"API Error GetProductById: {ex.Message}");
+        }
+
+        return null;
     }
 }

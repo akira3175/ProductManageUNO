@@ -77,6 +77,7 @@ public partial class App : Application
                     services.AddTransient<IApiService, ApiService>();
                     services.AddHttpClient<ApiService>();
                     services.AddTransient<MainModel>();
+                    services.AddTransient<ProductDetailModel>();
                     services.AddDbContext<Data.AppDbContext>();
                 })
                 .UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
