@@ -58,7 +58,7 @@
             <StackPanel Spacing="12">
                 <!-- Empty State -->
                 <Grid Height="400" 
-                      Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}">
+                      Visibility="{Binding CartEmpty}">
                     <StackPanel HorizontalAlignment="Center" 
                                VerticalAlignment="Center" 
                                Spacing="16">

@@ -31,7 +31,7 @@ public class ApiService : IApiService
         try
         {
             var response = await _httpClient.GetFromJsonAsync<ApiResPagination<List<Product>>>(
-                $"/api/Product?page={page}&pageSize={pageSize}");
+                $"/api/v1/Product?page={page}&pageSize={pageSize}");
 
             if (response is not null && response.Success)
             {
@@ -51,7 +51,7 @@ public class ApiService : IApiService
         try
         {
             var response = await _httpClient.GetFromJsonAsync<ApiResDetail<Product>>(
-                $"/api/Product/{id}");
+                $"/api/v1/Product/{id}");
 
             if (response is not null && response.Success)
             {

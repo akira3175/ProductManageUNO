@@ -25,6 +25,11 @@ public partial class CartModel : ObservableObject
     [ObservableProperty]
     private bool _isEmpty = true;
 
+    public Visibility CartEmpty
+    {
+        get => IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     public ObservableCollection<CartItem> CartItems { get; } = new();
 
     public CartModel(ICartService cartService)
@@ -130,5 +135,7 @@ public partial class CartModel : ObservableObject
         TotalItems = await _cartService.GetTotalItemsAsync();
         TotalAmount = await _cartService.GetTotalAmountAsync();
         IsEmpty = CartItems.Count == 0;
+
+        Console.WriteLine($"📊 Updated totals: Items={TotalItems}, Amount={TotalAmount}, IsEmpty={IsEmpty}, CartCount={CartItems.Count}");
     }
 }

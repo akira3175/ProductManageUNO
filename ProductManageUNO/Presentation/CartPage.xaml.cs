@@ -21,7 +21,7 @@ public sealed partial class CartPage : Page
         Resources["PriceFormatConverter"] = new PriceFormatConverter();
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
 
@@ -29,6 +29,16 @@ public sealed partial class CartPage : Page
         {
             _viewModel = app.Host.Services.GetService(typeof(CartModel)) as CartModel;
             DataContext = _viewModel;
+
+            if (_viewModel != null)
+            {
+                await _viewModel.LoadCartCommand.ExecuteAsync(null);
+
+                // ✅ DEBUG: In ra trạng thái sau khi load
+                Console.WriteLine($"📊 UI Debug: CartItems.Count = {_viewModel.CartItems.Count}");
+                Console.WriteLine($"📊 UI Debug: IsEmpty = {_viewModel.IsEmpty}");
+                Console.WriteLine($"📊 UI Debug: TotalItems = {_viewModel.TotalItems}");
+            }
         }
     }
 

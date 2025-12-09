@@ -53,7 +53,7 @@ public partial class App : Application
                     services.AddTransient<ICartService, CartService>();
                     services.AddTransient<MainModel>();
                     services.AddTransient<ProductDetailModel>();
-                    services.AddTransient<CartModel>();
+                    services.AddSingleton<CartModel>();
                     services.AddDbContext<Data.AppDbContext>();
                 })
                 .UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
