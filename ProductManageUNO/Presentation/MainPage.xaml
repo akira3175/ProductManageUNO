@@ -10,7 +10,7 @@
     x:Name="PageRoot"
     Background="{ThemeResource BackgroundBrush}">
 
-    <Grid RowDefinitions="Auto, Auto, *">
+    <Grid RowDefinitions="Auto, Auto, *, Auto">
         <!-- Header -->
         <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="20,20">
             <Grid.ColumnDefinitions>
@@ -42,34 +42,6 @@
                         VerticalAlignment="Center"
                         ToolTipService.ToolTip="Tải lại">
                     <SymbolIcon Symbol="Refresh" Foreground="{ThemeResource OnPrimaryBrush}"/>
-                </Button>
-
-                <!-- Cart Button -->
-                <Button Background="Transparent"
-                        BorderThickness="0"
-                        VerticalAlignment="Center"
-                        Click="CartButton_Click"
-                        ToolTipService.ToolTip="Giỏ hàng">
-                    <Grid>
-                        <SymbolIcon Symbol="Shop" Foreground="{ThemeResource OnPrimaryBrush}"/>
-                        <!-- Cart Badge -->
-                        <Border Background="{ThemeResource ErrorColor}"
-                               CornerRadius="10"
-                               MinWidth="20"
-                               Height="20"
-                               Padding="4,0"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Top"
-                               Margin="0,-8,-8,0"
-                               Visibility="{Binding CartItemCount, Converter={StaticResource CountToVisibilityConverter}}">
-                            <TextBlock Text="{Binding CartItemCount}"
-                                      FontSize="10"
-                                      FontWeight="Bold"
-                                      Foreground="White"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
-                        </Border>
-                    </Grid>
                 </Button>
             </StackPanel>
         </Grid>
@@ -228,5 +200,73 @@
                 </Grid>
             </ListView.Footer>
         </ListView>
+
+        <!-- Bottom Navigation Bar -->
+        <Border Grid.Row="3" 
+                Background="{ThemeResource SurfaceBrush}"
+                BorderBrush="{ThemeResource OutlineVariantBrush}"
+                BorderThickness="0,1,0,0">
+            <Grid ColumnDefinitions="*,*,*" Padding="0,8">
+                <!-- Home Tab -->
+                <Button Grid.Column="0"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Padding="0,8">
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
+                        <FontIcon Glyph="&#xE80F;" FontSize="24" Foreground="{ThemeResource PrimaryBrush}"/>
+                        <TextBlock Text="Trang chủ" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryBrush}"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Cart Tab -->
+                <Button Grid.Column="1"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Padding="0,8"
+                       Click="CartButton_Click">
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
+                        <Grid>
+                            <FontIcon Glyph="&#xE7BF;" FontSize="24" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                            <!-- Cart Badge -->
+                            <Border Background="{ThemeResource ErrorColor}"
+                                   CornerRadius="10"
+                                   MinWidth="18"
+                                   Height="18"
+                                   Padding="4,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Margin="0,-6,-10,0"
+                                   Visibility="{Binding CartItemCount, Converter={StaticResource CountToVisibilityConverter}}">
+                                <TextBlock Text="{Binding CartItemCount}"
+                                          FontSize="10"
+                                          FontWeight="Bold"
+                                          Foreground="White"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        <TextBlock Text="Giỏ hàng" FontSize="12" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Orders Tab -->
+                <Button Grid.Column="2"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Padding="0,8"
+                       Click="OrdersButton_Click">
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
+                        <FontIcon Glyph="&#xE7C3;" FontSize="24" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                        <TextBlock Text="Đơn hàng" FontSize="12" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
     </Grid>
 </Page>

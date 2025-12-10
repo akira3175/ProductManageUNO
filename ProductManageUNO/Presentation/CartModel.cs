@@ -1,17 +1,20 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
 using ProductManageUNO.Models;
 using ProductManageUNO.Services;
 
 namespace ProductManageUNO.Presentation;
 
+[Bindable]
 public partial class CartModel : ObservableObject
 {
     private readonly ICartService _cartService;
 
     [ObservableProperty]
-    private string _title = "Giá» HÃ ng";
+    private string _title = "Giỏ Hàng";
 
     [ObservableProperty]
     private bool _isLoading;
@@ -22,12 +25,22 @@ public partial class CartModel : ObservableObject
     [ObservableProperty]
     private decimal _totalAmount = 0;
 
+    // Pre-formatted total amount for UI binding (bypasses converter issues)
+    public string TotalAmountFormatted => TotalAmount.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) + "đ";
+
+    partial void OnTotalAmountChanged(decimal value)
+    {
+        OnPropertyChanged(nameof(TotalAmountFormatted));
+    }
+
     [ObservableProperty]
     private bool _isEmpty = true;
 
-    public Visibility CartEmpty
+    public Visibility CartEmpty => IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+
+    partial void OnIsEmptyChanged(bool value)
     {
-        get => IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+        OnPropertyChanged(nameof(CartEmpty));
     }
 
     public ObservableCollection<CartItem> CartItems { get; } = new();
@@ -51,23 +64,42 @@ public partial class CartModel : ObservableObject
         try
         {
             IsLoading = true;
-            Console.WriteLine("ðŸ”µ Loading cart...");
+            Console.WriteLine("🔵 Loading cart...");
 
             var items = await _cartService.GetAllAsync();
 
-            CartItems.Clear();
-            foreach (var item in items)
+            // Ensure UI updates happen on the UI thread
+            var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+            
+            // Define the update action
+            void UpdateUi()
             {
-                CartItems.Add(item);
+                // STANDARD UPDATE: Clear and Add to keep the same collection instance
+                // This is the most reliable way for XAML bindings
+                CartItems.Clear();
+                foreach (var item in items)
+                {
+                    CartItems.Add(item);
+                }
+                
+                // Update totals (these are simple properties, but safe to do on UI thread)
+                 _ = RefreshTotalsAsync();
+                 
+                 Console.WriteLine($"✅ Loaded {CartItems.Count} items on UI Thread");
             }
 
-            await UpdateTotalsAsync();
-
-            Console.WriteLine($"âœ… Loaded {CartItems.Count} items");
+            if (dispatcherQueue != null && !dispatcherQueue.HasThreadAccess)
+            {
+                dispatcherQueue.TryEnqueue(UpdateUi);
+            }
+            else
+            {
+                UpdateUi();
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"âŒ LoadCartAsync Error: {ex.Message}");
+            Console.WriteLine($"❌ LoadCartAsync Error: {ex.Message}");
         }
         finally
         {
@@ -130,12 +162,16 @@ public partial class CartModel : ObservableObject
         // Sáº½ implement sau khi cÃ³ API Order
     }
 
-    private async Task UpdateTotalsAsync()
+    public async Task RefreshTotalsAsync()
     {
         TotalItems = await _cartService.GetTotalItemsAsync();
         TotalAmount = await _cartService.GetTotalAmountAsync();
         IsEmpty = CartItems.Count == 0;
 
-        Console.WriteLine($"📊 Updated totals: Items={TotalItems}, Amount={TotalAmount}, IsEmpty={IsEmpty}, CartCount={CartItems.Count}");
+        // Force explicit notification for all dependent properties
+        OnPropertyChanged(nameof(TotalAmountFormatted));
+        OnPropertyChanged(nameof(CartEmpty));
+
+        Console.WriteLine($"📊 Updated totals: Items={TotalItems}, Amount={TotalAmount}, Formatted={TotalAmountFormatted}, IsEmpty={IsEmpty}");
     }
 }

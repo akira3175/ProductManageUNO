@@ -51,9 +51,14 @@ public partial class App : Application
                     services.AddTransient<IApiService, ApiService>();
                     services.AddHttpClient<ApiService>();
                     services.AddTransient<ICartService, CartService>();
+                    services.AddTransient<ICustomerService, CustomerService>();
+                    services.AddTransient<IOrderHistoryService, OrderHistoryService>();
+                    services.AddHttpClient<OrderService>();
+                    services.AddTransient<IOrderService, OrderService>();
                     services.AddTransient<MainModel>();
                     services.AddTransient<ProductDetailModel>();
                     services.AddSingleton<CartModel>();
+                    services.AddTransient<CheckoutModel>();
                     services.AddDbContext<Data.AppDbContext>();
                 })
                 .UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
@@ -76,6 +81,11 @@ public partial class App : Application
             {
                 using var scope = Host.Services.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<Data.AppDbContext>();
+                
+                // ⚠️ DEV ONLY: Delete and recreate database to apply new schema
+                // Remove this line after schema is stable
+                await dbContext.Database.EnsureDeletedAsync();
+                
                 await dbContext.Database.EnsureCreatedAsync();
                 Console.WriteLine("✅ Database initialized successfully");
             }

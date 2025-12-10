@@ -156,4 +156,26 @@ public sealed partial class MainPage : Page
             Console.WriteLine($"❌ Cart navigation error: {ex.Message}");
         }
     }
+
+    private void OrdersButton_Click(object sender, RoutedEventArgs e)
+    {
+        Console.WriteLine("🔵 Navigating to Orders");
+
+        try
+        {
+            if (Frame != null)
+            {
+                bool success = Frame.Navigate(typeof(OrderHistoryPage));
+                Console.WriteLine($"🔵 Orders navigation result: {success}");
+            }
+            else
+            {
+                Console.WriteLine("❌ Frame is null!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Orders navigation error: {ex.Message}");
+        }
+    }
 }

@@ -30,6 +30,7 @@ public class CartService : ICartService
         try
         {
             return await _context.CartItems
+                .AsNoTracking()
                 .OrderByDescending(x => x.AddedAt)
                 .ToListAsync();
         }
@@ -162,7 +163,7 @@ public class CartService : ICartService
     {
         try
         {
-            var items = await _context.CartItems.ToListAsync();
+            var items = await _context.CartItems.AsNoTracking().ToListAsync();
             return items.Sum(x => x.Subtotal);
         }
         catch

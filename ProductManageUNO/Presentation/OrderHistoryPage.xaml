@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="ProductManageUNO.Presentation.OrderHistoryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ProductManageUNO.Presentation"
+    Background="{ThemeResource BackgroundBrush}">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header -->
+        <Grid Grid.Row="0" 
+              Background="{ThemeResource PrimaryBrush}"
+              Padding="16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    x:Name="BackButton"
+                    Click="BackButton_Click"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Padding="8">
+                <FontIcon Glyph="&#xE72B;" 
+                         FontSize="20" 
+                         Foreground="{ThemeResource OnPrimaryBrush}"/>
+            </Button>
+
+            <TextBlock Grid.Column="1"
+                      Text="Lịch sử đơn hàng"
+                      FontSize="20"
+                      FontWeight="SemiBold"
+                      Foreground="{ThemeResource OnPrimaryBrush}"
+                      VerticalAlignment="Center"
+                      Margin="12,0,0,0"/>
+        </Grid>
+
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <!-- Empty State -->
+            <StackPanel x:Name="EmptyState"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Spacing="16"
+                       Visibility="Collapsed">
+                <FontIcon Glyph="&#xE7BA;" 
+                         FontSize="64" 
+                         Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                <TextBlock Text="Chưa có đơn hàng nào"
+                          FontSize="18"
+                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                          HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Order List -->
+            <ScrollViewer x:Name="OrderListScrollViewer">
+                <ItemsControl x:Name="OrdersList" Padding="16">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{ThemeResource SurfaceBrush}"
+                                    CornerRadius="12"
+                                    Padding="16"
+                                    Margin="0,0,0,12">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+                                    <!-- Header: Order ID + Status -->
+                                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xE7BF;" FontSize="16" Foreground="{ThemeResource PrimaryBrush}"/>
+                                            <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="{ThemeResource OnSurfaceBrush}">
+                                                <Run Text="Đơn #"/>
+                                                <Run Text="{Binding ApiOrderId}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" 
+                                               Background="{ThemeResource TertiaryContainerBrush}"
+                                               CornerRadius="4"
+                                               Padding="8,4">
+                                            <TextBlock Text="{Binding StatusDisplay}"
+                                                      FontSize="12"
+                                                      Foreground="{ThemeResource OnTertiaryContainerBrush}"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Customer Info -->
+                                    <StackPanel Grid.Row="1" Margin="0,12,0,0" Spacing="4">
+                                        <TextBlock FontSize="14" Foreground="{ThemeResource OnSurfaceBrush}">
+                                            <Run Text="👤 " />
+                                            <Run Text="{Binding CustomerName}"/>
+                                        </TextBlock>
+                                        <TextBlock FontSize="12" Foreground="{ThemeResource OnSurfaceVariantBrush}">
+                                            <Run Text="📞 " />
+                                            <Run Text="{Binding CustomerPhone}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <!-- Divider -->
+                                    <Border Grid.Row="2" Height="1" Background="{ThemeResource OutlineVariantBrush}" Margin="0,12"/>
+
+                                    <!-- Footer: Date + Total -->
+                                    <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+                                        <TextBlock Grid.Column="0"
+                                                  Text="{Binding OrderDateFormatted}"
+                                                  FontSize="12"
+                                                  Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                                                  VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1"
+                                                  Text="{Binding TotalAmountFormatted}"
+                                                  FontSize="18"
+                                                  FontWeight="Bold"
+                                                  Foreground="{ThemeResource PrimaryBrush}"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>

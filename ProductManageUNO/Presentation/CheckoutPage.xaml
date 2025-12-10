@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="ProductManageUNO.Presentation.CheckoutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ProductManageUNO.Presentation"
+    x:Name="PageRoot"
+    Background="{ThemeResource BackgroundBrush}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Grid Grid.Row="0" 
+              Background="{ThemeResource PrimaryBrush}"
+              Padding="16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    x:Name="BackButton"
+                    Click="BackButton_Click"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Padding="8">
+                <FontIcon Glyph="&#xE72B;" 
+                         FontSize="20" 
+                         Foreground="{ThemeResource OnPrimaryBrush}"/>
+            </Button>
+
+            <TextBlock Grid.Column="1"
+                      Text="{Binding Title}"
+                      FontSize="20"
+                      FontWeight="SemiBold"
+                      Foreground="{ThemeResource OnPrimaryBrush}"
+                      VerticalAlignment="Center"
+                      Margin="12,0,0,0"/>
+        </Grid>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" Padding="16">
+            <StackPanel Spacing="16">
+                
+                <!-- Error Message -->
+                <Border Background="#FFEBEE"
+                        CornerRadius="8"
+                        Padding="12"
+                        Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                              Foreground="#C62828"
+                              TextWrapping="Wrap"/>
+                </Border>
+
+                <!-- Customer Info Form -->
+                <Border Background="{ThemeResource SurfaceBrush}"
+                        CornerRadius="12"
+                        Padding="16">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Thông tin khách hàng"
+                                  FontSize="18"
+                                  FontWeight="SemiBold"
+                                  Foreground="{ThemeResource OnSurfaceBrush}"/>
+
+                        <!-- Name -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Tên khách hàng *"
+                                      FontSize="14"
+                                      Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                            <TextBox x:Name="NameTextBox"
+                                    Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    PlaceholderText="Nhập tên khách hàng"
+                                    FontSize="16"/>
+                        </StackPanel>
+
+                        <!-- Phone -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Số điện thoại *"
+                                      FontSize="14"
+                                      Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                            <TextBox x:Name="PhoneTextBox"
+                                    Text="{Binding CustomerPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    PlaceholderText="Nhập số điện thoại"
+                                    InputScope="TelephoneNumber"
+                                    FontSize="16"/>
+                        </StackPanel>
+
+                        <!-- Email -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Email"
+                                      FontSize="14"
+                                      Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                            <TextBox x:Name="EmailTextBox"
+                                    Text="{Binding CustomerEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    PlaceholderText="Nhập email"
+                                    InputScope="EmailNameOrAddress"
+                                    FontSize="16"/>
+                        </StackPanel>
+
+                        <!-- Address -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Địa chỉ"
+                                      FontSize="14"
+                                      Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                            <TextBox x:Name="AddressTextBox"
+                                    Text="{Binding CustomerAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    PlaceholderText="Nhập địa chỉ giao hàng"
+                                    TextWrapping="Wrap"
+                                    AcceptsReturn="True"
+                                    Height="80"
+                                    FontSize="16"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Order Summary -->
+                <Border Background="{ThemeResource SurfaceBrush}"
+                        CornerRadius="12"
+                        Padding="16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Đơn hàng của bạn"
+                                  FontSize="18"
+                                  FontWeight="SemiBold"
+                                  Foreground="{ThemeResource OnSurfaceBrush}"/>
+
+                        <!-- Cart Items -->
+                        <ItemsControl x:Name="OrderItemsList"
+                                     ItemsSource="{Binding CartItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,8" ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding ProductName}"
+                                                      FontSize="14"
+                                                      Foreground="{ThemeResource OnSurfaceBrush}"
+                                                      TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock FontSize="12"
+                                                      Foreground="{ThemeResource OnSurfaceVariantBrush}">
+                                                <Run Text="{Binding Quantity}"/>
+                                                <Run Text="x"/>
+                                                <Run Text="{Binding Price}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1"
+                                                  Text="{Binding Subtotal}"
+                                                  FontSize="14"
+                                                  FontWeight="SemiBold"
+                                                  Foreground="{ThemeResource PrimaryBrush}"
+                                                  VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Border Height="1" Background="{ThemeResource OutlineVariantBrush}"/>
+
+                        <!-- Total -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                      Text="Tổng cộng"
+                                      FontSize="16"
+                                      FontWeight="SemiBold"
+                                      Foreground="{ThemeResource OnSurfaceBrush}"/>
+                            <TextBlock x:Name="TotalAmountText"
+                                      Grid.Column="1"
+                                      Text="{Binding TotalAmountFormatted}"
+                                      FontSize="20"
+                                      FontWeight="Bold"
+                                      Foreground="{ThemeResource PrimaryBrush}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Bottom Button -->
+        <Border Grid.Row="2" 
+                Background="{ThemeResource SurfaceBrush}"
+                BorderBrush="{ThemeResource OutlineVariantBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,12">
+            <Button x:Name="PlaceOrderButton"
+                   Click="PlaceOrderButton_Click"
+                   HorizontalAlignment="Stretch"
+                   Style="{ThemeResource AccentButtonStyle}"
+                   FontSize="16"
+                   Padding="16,12">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon Glyph="&#xE73E;" FontSize="18"/>
+                    <TextBlock Text="Đặt hàng" FontSize="16"/>
+                </StackPanel>
+            </Button>
+        </Border>
+
+        <!-- Loading Overlay -->
+        <Grid x:Name="LoadingOverlay"
+              Grid.RowSpan="3"
+              Background="#80000000"
+              Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                <ProgressRing IsActive="True" Width="48" Height="48"/>
+                <TextBlock Text="Đang xử lý..." 
+                          Foreground="White" 
+                          FontSize="16"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
