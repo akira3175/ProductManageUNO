@@ -166,18 +166,24 @@
                                         <Border Grid.Column="1"
                                                Background="{ThemeResource SurfaceVariantBrush}"
                                                CornerRadius="12"
-                                               Padding="6">
+                                               Padding="4">
                                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                                <Button Background="{ThemeResource SurfaceBrush}"
-                                                        BorderThickness="0"
-                                                        Width="40"
-                                                        Height="40"
+                                                <!-- Decrease Button -->
+                                                <Border Background="{ThemeResource SurfaceBrush}"
                                                         CornerRadius="10"
+                                                        Width="44"
+                                                        Height="44"
                                                         Tag="{Binding}"
-                                                        Click="DecreaseQuantity_Click">
-                                                    <TextBlock Text="−" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource PrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Button>
+                                                        Tapped="DecreaseQuantity_Tapped">
+                                                    <TextBlock Text="−"
+                                                              FontSize="26"
+                                                              FontWeight="Bold"
+                                                              Foreground="{ThemeResource PrimaryBrush}"
+                                                              HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                                </Border>
 
+                                                <!-- Quantity Display -->
                                                 <Border Background="{ThemeResource SurfaceBrush}"
                                                        CornerRadius="8"
                                                        MinWidth="48"
@@ -190,15 +196,20 @@
                                                               VerticalAlignment="Center"/>
                                                 </Border>
 
-                                                <Button Background="{ThemeResource SurfaceBrush}"
-                                                        BorderThickness="0"
-                                                        Width="40"
-                                                        Height="40"
+                                                <!-- Increase Button -->
+                                                <Border Background="{ThemeResource SurfaceBrush}"
                                                         CornerRadius="10"
+                                                        Width="44"
+                                                        Height="44"
                                                         Tag="{Binding}"
-                                                        Click="IncreaseQuantity_Click">
-                                                    <TextBlock Text="+" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource PrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Button>
+                                                        Tapped="IncreaseQuantity_Tapped">
+                                                    <TextBlock Text="+"
+                                                              FontSize="26"
+                                                              FontWeight="Bold"
+                                                              Foreground="{ThemeResource PrimaryBrush}"
+                                                              HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                                </Border>
                                             </StackPanel>
                                         </Border>
                                     </Grid>

@@ -77,6 +77,24 @@ public sealed partial class CartPage : Page
         }
     }
 
+    private async void DecreaseQuantity_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element && element.Tag is ProductManageUNO.Models.CartItem cartItem && _viewModel != null)
+        {
+            await _viewModel.DecreaseQuantityCommand.ExecuteAsync(cartItem);
+            ForceRefreshItemsSource();
+        }
+    }
+
+    private async void IncreaseQuantity_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element && element.Tag is ProductManageUNO.Models.CartItem cartItem && _viewModel != null)
+        {
+            await _viewModel.IncreaseQuantityCommand.ExecuteAsync(cartItem);
+            ForceRefreshItemsSource();
+        }
+    }
+
     /// <summary>
     /// Force the ItemsControl to rebind by setting ItemsSource to null, then back to the collection.
     /// Also directly updates TotalAmount display. This is a workaround for UNO Platform binding issues.
