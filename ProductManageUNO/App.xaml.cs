@@ -82,10 +82,7 @@ public partial class App : Application
                 using var scope = Host.Services.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<Data.AppDbContext>();
                 
-                // ⚠️ DEV ONLY: Delete and recreate database to apply new schema
-                // Remove this line after schema is stable
-                await dbContext.Database.EnsureDeletedAsync();
-                
+                // Tạo database nếu chưa tồn tại (giữ nguyên dữ liệu nếu đã có)
                 await dbContext.Database.EnsureCreatedAsync();
                 Console.WriteLine("✅ Database initialized successfully");
             }
