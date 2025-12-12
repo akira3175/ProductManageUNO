@@ -10,7 +10,7 @@
         <!-- Header -->
         <Grid Grid.Row="0" 
               Background="{ThemeResource PrimaryBrush}"
-              Padding="16,12">
+              Padding="16,14,20,18">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -21,19 +21,23 @@
                     Click="BackButton_Click"
                     Background="Transparent"
                     BorderThickness="0"
-                    Padding="8">
+                    Padding="10"
+                    CornerRadius="20">
                 <FontIcon Glyph="&#xE72B;" 
                          FontSize="20" 
                          Foreground="{ThemeResource OnPrimaryBrush}"/>
             </Button>
 
-            <TextBlock Grid.Column="1"
-                      Text="Lịch sử đơn hàng"
-                      FontSize="20"
-                      FontWeight="SemiBold"
-                      Foreground="{ThemeResource OnPrimaryBrush}"
-                      VerticalAlignment="Center"
-                      Margin="12,0,0,0"/>
+            <StackPanel Grid.Column="1" 
+                        VerticalAlignment="Center" 
+                        Margin="16,0,0,0" 
+                        Spacing="4">
+                <TextBlock Text="Lịch sử đơn hàng"
+                          FontSize="24"
+                          FontWeight="Bold"
+                          Foreground="{ThemeResource OnPrimaryBrush}"
+                          CharacterSpacing="20"/>
+            </StackPanel>
         </Grid>
 
         <!-- Content -->
@@ -42,71 +46,100 @@
             <StackPanel x:Name="EmptyState"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-                       Spacing="16"
+                       Spacing="20"
                        Visibility="Collapsed">
-                <FontIcon Glyph="&#xE7BA;" 
-                         FontSize="64" 
-                         Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                <Border Background="{ThemeResource SurfaceVariantBrush}"
+                        CornerRadius="50"
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center">
+                    <FontIcon Glyph="&#xE7BA;" 
+                             FontSize="48" 
+                             Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                             Opacity="0.5"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"/>
+                </Border>
                 <TextBlock Text="Chưa có đơn hàng nào"
-                          FontSize="18"
+                          FontSize="20"
+                          FontWeight="SemiBold"
                           Foreground="{ThemeResource OnSurfaceVariantBrush}"
                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Đơn hàng của bạn sẽ xuất hiện ở đây"
+                          FontSize="14"
+                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                          HorizontalAlignment="Center"
+                          Opacity="0.7"/>
             </StackPanel>
 
             <!-- Order List -->
             <ScrollViewer x:Name="OrderListScrollViewer">
-                <ItemsControl x:Name="OrdersList" Padding="16">
+                <ItemsControl x:Name="OrdersList" Padding="16,16,16,20">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="{ThemeResource SurfaceBrush}"
-                                    CornerRadius="12"
-                                    Padding="16"
-                                    Margin="0,0,0,12">
-                                <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+                                    CornerRadius="16"
+                                    Padding="18"
+                                    Margin="0,0,0,14"
+                                    BorderBrush="{ThemeResource OutlineVariantBrush}"
+                                    BorderThickness="1">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="4">
                                     <!-- Header: Order ID + Status -->
                                     <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
-                                            <FontIcon Glyph="&#xE7BF;" FontSize="16" Foreground="{ThemeResource PrimaryBrush}"/>
-                                            <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="{ThemeResource OnSurfaceBrush}">
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                                            <Border Background="{ThemeResource PrimaryContainerBrush}" 
+                                                    CornerRadius="8" 
+                                                    Padding="8">
+                                                <FontIcon Glyph="&#xE7BF;" FontSize="16" Foreground="{ThemeResource PrimaryBrush}"/>
+                                            </Border>
+                                            <TextBlock FontSize="17" FontWeight="Bold" Foreground="{ThemeResource OnSurfaceBrush}" VerticalAlignment="Center">
                                                 <Run Text="Đơn #"/>
                                                 <Run Text="{Binding ApiOrderId}"/>
                                             </TextBlock>
                                         </StackPanel>
                                         <Border Grid.Column="1" 
                                                Background="{ThemeResource TertiaryContainerBrush}"
-                                               CornerRadius="4"
-                                               Padding="8,4">
+                                               CornerRadius="8"
+                                               Padding="12,6">
                                             <TextBlock Text="{Binding StatusDisplay}"
                                                       FontSize="12"
+                                                      FontWeight="SemiBold"
                                                       Foreground="{ThemeResource OnTertiaryContainerBrush}"/>
                                         </Border>
                                     </Grid>
 
                                     <!-- Customer Info -->
-                                    <StackPanel Grid.Row="1" Margin="0,12,0,0" Spacing="4">
-                                        <TextBlock FontSize="14" Foreground="{ThemeResource OnSurfaceBrush}">
-                                            <Run Text="👤 " />
-                                            <Run Text="{Binding CustomerName}"/>
-                                        </TextBlock>
-                                        <TextBlock FontSize="12" Foreground="{ThemeResource OnSurfaceVariantBrush}">
-                                            <Run Text="📞 " />
-                                            <Run Text="{Binding CustomerPhone}"/>
-                                        </TextBlock>
+                                    <StackPanel Grid.Row="1" Margin="0,14,0,0" Spacing="8">
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <FontIcon Glyph="&#xE77B;" FontSize="14" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                            <TextBlock Text="{Binding CustomerName}"
+                                                       FontSize="15"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{ThemeResource OnSurfaceBrush}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <FontIcon Glyph="&#xE717;" FontSize="14" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                            <TextBlock Text="{Binding CustomerPhone}"
+                                                       FontSize="13"
+                                                       Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                        </StackPanel>
                                     </StackPanel>
 
                                     <!-- Divider -->
-                                    <Border Grid.Row="2" Height="1" Background="{ThemeResource OutlineVariantBrush}" Margin="0,12"/>
+                                    <Border Grid.Row="2" Height="1" Background="{ThemeResource OutlineVariantBrush}" Margin="0,14"/>
 
                                     <!-- Footer: Date + Total -->
                                     <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
-                                        <TextBlock Grid.Column="0"
-                                                  Text="{Binding OrderDateFormatted}"
-                                                  FontSize="12"
-                                                  Foreground="{ThemeResource OnSurfaceVariantBrush}"
-                                                  VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xEC92;" FontSize="14" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                            <TextBlock Text="{Binding OrderDateFormatted}"
+                                                      FontSize="13"
+                                                      Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                                                      VerticalAlignment="Center"/>
+                                        </StackPanel>
                                         <TextBlock Grid.Column="1"
                                                   Text="{Binding TotalAmountFormatted}"
-                                                  FontSize="18"
+                                                  FontSize="20"
                                                   FontWeight="Bold"
                                                   Foreground="{ThemeResource PrimaryBrush}"/>
                                     </Grid>

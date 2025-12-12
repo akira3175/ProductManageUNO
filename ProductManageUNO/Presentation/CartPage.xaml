@@ -12,7 +12,7 @@
 
     <Grid RowDefinitions="Auto, *, Auto">
         <!-- Header -->
-        <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="16,12">
+        <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="16,14,20,18">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -23,30 +23,35 @@
                     Background="Transparent"
                     BorderThickness="0"
                     Click="BackButton_Click"
+                    Padding="10"
+                    CornerRadius="20"
                     ToolTipService.ToolTip="Quay lại">
                 <SymbolIcon Symbol="Back" Foreground="{ThemeResource OnPrimaryBrush}"/>
             </Button>
 
-            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0">
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0,0,0" Spacing="4">
                 <TextBlock Text="{Binding Title}" 
-                          FontSize="24" 
+                          FontSize="26" 
                           FontWeight="Bold"
-                          Foreground="{ThemeResource OnPrimaryBrush}"/>
+                          Foreground="{ThemeResource OnPrimaryBrush}"
+                          CharacterSpacing="20"/>
                 <TextBlock Text="{Binding TotalItems, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0} sản phẩm'}"
-                          FontSize="12"
-                          Opacity="0.8"
+                          FontSize="13"
+                          Opacity="0.85"
                           Foreground="{ThemeResource OnPrimaryBrush}"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12">
                 <ProgressRing IsActive="{Binding IsLoading}" 
-                              Width="24" 
-                              Height="24"
+                              Width="26" 
+                              Height="26"
                               Foreground="{ThemeResource OnPrimaryBrush}"/>
 
                 <Button Command="{Binding ClearCartCommand}"
                         Background="Transparent"
                         BorderThickness="0"
+                        Padding="10"
+                        CornerRadius="20"
                         ToolTipService.ToolTip="Xóa tất cả"
                         IsEnabled="{Binding IsEmpty, Converter={StaticResource InverseBoolConverter}}">
                     <SymbolIcon Symbol="Delete" Foreground="{ThemeResource OnPrimaryBrush}"/>
@@ -55,20 +60,28 @@
         </Grid>
 
         <!-- Cart Items List -->
-        <ScrollViewer Grid.Row="1" Padding="12,8">
-            <StackPanel Spacing="12">
+        <ScrollViewer Grid.Row="1" Padding="16,12">
+            <StackPanel Spacing="16">
                 <!-- Empty State -->
                 <Grid Height="400" 
                       Visibility="{Binding CartEmpty}">
                     <StackPanel HorizontalAlignment="Center" 
                                VerticalAlignment="Center" 
-                               Spacing="16">
-                        <FontIcon Glyph="&#xE7BF;" 
-                                 FontSize="72" 
-                                 Foreground="{ThemeResource OnSurfaceVariantBrush}" 
-                                 Opacity="0.4"/>
+                               Spacing="20">
+                        <Border Background="{ThemeResource SurfaceVariantBrush}"
+                                CornerRadius="50"
+                                Width="100"
+                                Height="100"
+                                HorizontalAlignment="Center">
+                            <FontIcon Glyph="&#xE7BF;" 
+                                     FontSize="48" 
+                                     Foreground="{ThemeResource OnSurfaceVariantBrush}" 
+                                     Opacity="0.5"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+                        </Border>
                         <TextBlock Text="Giỏ hàng trống" 
-                                  FontSize="18"
+                                  FontSize="20"
                                   FontWeight="SemiBold"
                                   Foreground="{ThemeResource OnSurfaceVariantBrush}"
                                   HorizontalAlignment="Center"/>
@@ -79,7 +92,9 @@
                                   Opacity="0.7"/>
                         <Button Content="Quay lại mua hàng" 
                                Click="BackButton_Click"
-                               Style="{ThemeResource AccentButtonStyle}"/>
+                               Style="{ThemeResource AccentButtonStyle}"
+                               Padding="24,12"
+                               Margin="0,8,0,0"/>
                     </StackPanel>
                 </Grid>
 
@@ -91,91 +106,94 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="models:CartItem">
                             <Border Background="{ThemeResource SurfaceBrush}" 
-                                   CornerRadius="12" 
-                                   Margin="0,4"
-                                   Padding="16"
+                                   CornerRadius="16" 
+                                   Margin="0,6"
+                                   Padding="18"
                                    BorderBrush="{ThemeResource OutlineVariantBrush}"
                                    BorderThickness="1">
-                                <Grid RowDefinitions="Auto,Auto,Auto">
-                                    <!-- Product Info -->
+                                <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
+                                    <!-- Product Info Row -->
                                     <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-                                        <StackPanel Grid.Column="0" Spacing="4">
+                                        <StackPanel Grid.Column="0" Spacing="8">
                                             <TextBlock Text="{Binding ProductName}" 
-                                                      FontSize="16"
+                                                      FontSize="17"
                                                       FontWeight="SemiBold"
                                                       Foreground="{ThemeResource OnSurfaceBrush}"
-                                                      TextWrapping="Wrap"/>
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                      TextWrapping="Wrap"
+                                                      MaxLines="2"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
                                                 <Border Background="{ThemeResource SecondaryContainerBrush}"
-                                                       CornerRadius="4"
-                                                       Padding="6,3">
+                                                       CornerRadius="6"
+                                                       Padding="8,4">
                                                     <TextBlock Text="{Binding Barcode}" 
-                                                              FontSize="11"
+                                                              FontSize="12"
                                                               Foreground="{ThemeResource OnSecondaryContainerBrush}"/>
                                                 </Border>
                                                 <TextBlock Text="{Binding Unit}" 
-                                                          FontSize="12"
+                                                          FontSize="13"
                                                           Foreground="{ThemeResource OnSurfaceVariantBrush}"
                                                           VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </StackPanel>
 
                                         <Button Grid.Column="1"
-                                                Background="Transparent"
+                                                Background="{ThemeResource ErrorContainerColor}"
                                                 BorderThickness="0"
-                                                Padding="8"
+                                                Padding="10"
+                                                CornerRadius="20"
                                                 Tag="{Binding}"
                                                 Click="RemoveItem_Click">
-                                            <FontIcon Glyph="&#xE74D;" FontSize="18" Foreground="{ThemeResource ErrorColor}"/>
+                                            <FontIcon Glyph="&#xE74D;" FontSize="16" Foreground="{ThemeResource ErrorColor}"/>
                                         </Button>
                                     </Grid>
 
-                                    <!-- Price and Quantity Controls -->
-                                    <Grid Grid.Row="1" 
-                                         ColumnDefinitions="*,Auto"
-                                         Margin="0,12,0,0">
-                                        <StackPanel Grid.Column="0" Spacing="2">
+                                    <!-- Price and Quantity Controls Row -->
+                                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="4">
                                             <TextBlock Text="Đơn giá" 
-                                                      FontSize="11"
+                                                      FontSize="12"
                                                       Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
-                                            <TextBlock FontSize="16"
+                                            <TextBlock FontSize="18"
                                                       FontWeight="Bold"
                                                       Foreground="{ThemeResource PrimaryBrush}">
                                                 <Run Text="{Binding Price, Converter={StaticResource PriceFormatConverter}}"/>
-                                                <Run Text="đ" FontSize="12"/>
+                                                <Run Text="đ" FontSize="13"/>
                                             </TextBlock>
                                         </StackPanel>
 
+                                        <!-- Quantity Stepper -->
                                         <Border Grid.Column="1"
                                                Background="{ThemeResource SurfaceVariantBrush}"
-                                               CornerRadius="8"
-                                               Padding="4">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <Button Background="Transparent"
+                                               CornerRadius="12"
+                                               Padding="6">
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <Button Background="{ThemeResource SurfaceBrush}"
                                                         BorderThickness="0"
-                                                        Width="36"
-                                                        Height="36"
+                                                        Width="40"
+                                                        Height="40"
+                                                        CornerRadius="10"
                                                         Tag="{Binding}"
                                                         Click="DecreaseQuantity_Click">
                                                     <FontIcon Glyph="&#xE738;" FontSize="14"/>
                                                 </Button>
 
                                                 <Border Background="{ThemeResource SurfaceBrush}"
-                                                       CornerRadius="4"
-                                                       MinWidth="40"
-                                                       Padding="8,0">
+                                                       CornerRadius="8"
+                                                       MinWidth="48"
+                                                       Padding="12,0">
                                                     <TextBlock Text="{Binding Quantity}" 
-                                                              FontSize="16"
-                                                              FontWeight="SemiBold"
+                                                              FontSize="17"
+                                                              FontWeight="Bold"
                                                               Foreground="{ThemeResource OnSurfaceBrush}"
                                                               HorizontalAlignment="Center"
                                                               VerticalAlignment="Center"/>
                                                 </Border>
 
-                                                <Button Background="Transparent"
+                                                <Button Background="{ThemeResource SurfaceBrush}"
                                                         BorderThickness="0"
-                                                        Width="36"
-                                                        Height="36"
+                                                        Width="40"
+                                                        Height="40"
+                                                        CornerRadius="10"
                                                         Tag="{Binding}"
                                                         Click="IncreaseQuantity_Click">
                                                     <FontIcon Glyph="&#xE710;" FontSize="14"/>
@@ -184,24 +202,23 @@
                                         </Border>
                                     </Grid>
 
-                                    <!-- Subtotal -->
+                                    <!-- Subtotal Row -->
                                     <Border Grid.Row="2"
                                            Background="{ThemeResource TertiaryContainerBrush}"
-                                           CornerRadius="8"
-                                           Padding="12,8"
-                                           Margin="0,12,0,0">
+                                           CornerRadius="10"
+                                           Padding="14,10">
                                         <Grid ColumnDefinitions="*,Auto">
                                             <TextBlock Grid.Column="0"
                                                       Text="Thành tiền"
-                                                      FontSize="13"
+                                                      FontSize="14"
                                                       Foreground="{ThemeResource OnTertiaryContainerBrush}"
                                                       VerticalAlignment="Center"/>
                                             <TextBlock Grid.Column="1"
-                                                      FontSize="18"
+                                                      FontSize="20"
                                                       FontWeight="Bold"
                                                       Foreground="{ThemeResource OnTertiaryContainerBrush}">
                                                 <Run Text="{Binding Subtotal, Converter={StaticResource PriceFormatConverter}}"/>
-                                                <Run Text="đ" FontSize="14"/>
+                                                <Run Text="đ" FontSize="15"/>
                                             </TextBlock>
                                         </Grid>
                                     </Border>
@@ -218,16 +235,16 @@
                 Background="{ThemeResource SurfaceBrush}"
                 BorderBrush="{ThemeResource OutlineVariantBrush}"
                 BorderThickness="0,1,0,0"
-                Padding="16,12"
+                Padding="20,16"
                 Visibility="{Binding IsEmpty, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-            <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0" Spacing="4">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+                <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
                     <TextBlock Text="Tổng cộng" 
                               FontSize="14"
                               Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
                     <TextBlock x:Name="TotalAmountText"
                               Text="{Binding TotalAmountFormatted}"
-                              FontSize="24"
+                              FontSize="28"
                               FontWeight="Bold"
                               Foreground="{ThemeResource PrimaryBrush}"/>
                 </StackPanel>
@@ -236,12 +253,13 @@
                        Click="CheckoutButton_Click"
                        Style="{ThemeResource AccentButtonStyle}"
                        FontSize="16"
-                       Padding="32,12"
+                       Padding="32,14"
+                       CornerRadius="12"
                        VerticalAlignment="Center">
                     <Button.Content>
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE8C8;" FontSize="18"/>
-                            <TextBlock Text="Thanh toán" FontSize="16"/>
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <FontIcon Glyph="&#xE8C8;" FontSize="20"/>
+                            <TextBlock Text="Thanh toán" FontSize="17" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button.Content>
                 </Button>
