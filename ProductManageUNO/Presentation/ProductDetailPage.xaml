@@ -6,10 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ProductManageUNO.Presentation"
     xmlns:models="using:ProductManageUNO.Models"
+    xmlns:utu="using:Uno.Toolkit.UI"
     mc:Ignorable="d"
     Background="{ThemeResource BackgroundBrush}">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *" utu:SafeArea.Insets="Top">
         <!-- Header -->
         <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="16,14,20,18">
             <Grid.ColumnDefinitions>
@@ -61,36 +62,6 @@
                               FontWeight="SemiBold"
                               Foreground="{ThemeResource OnSurfaceVariantBrush}"
                               HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Grid>
-
-            <!-- Error State -->
-            <Grid Visibility="{x:Bind ViewModel.ErrorMessage, Mode=OneWay, Converter={StaticResource StringNotEmptyToVisibilityConverter}}">
-                <StackPanel HorizontalAlignment="Center" 
-                           VerticalAlignment="Center" 
-                           Spacing="20">
-                    <Border Background="{ThemeResource ErrorContainerColor}"
-                            CornerRadius="50"
-                            Width="100"
-                            Height="100"
-                            HorizontalAlignment="Center">
-                        <FontIcon Glyph="&#xE7BA;" 
-                                 FontSize="48" 
-                                 Foreground="{ThemeResource ErrorColor}"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center"/>
-                    </Border>
-                    <TextBlock Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-                              FontSize="16"
-                              Foreground="{ThemeResource OnSurfaceVariantBrush}"
-                              HorizontalAlignment="Center"
-                              TextWrapping="Wrap"
-                              MaxWidth="300"
-                              TextAlignment="Center"/>
-                    <Button Content="Thử lại" 
-                           Click="RetryButton_Click"
-                           Style="{ThemeResource AccentButtonStyle}"
-                           Padding="28,12"/>
                 </StackPanel>
             </Grid>
 

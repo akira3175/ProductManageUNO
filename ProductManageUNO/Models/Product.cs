@@ -32,6 +32,10 @@ public partial class CartItem : ObservableObject
 
     // Calculated property
     public decimal Subtotal => Price * Quantity;
+
+    // Formatted properties for display
+    public string PriceFormatted => Price.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) + "đ";
+    public string SubtotalFormatted => Subtotal.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) + "đ";
 }
 
 // DTO cho việc tạo Order

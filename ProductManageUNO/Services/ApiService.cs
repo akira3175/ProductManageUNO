@@ -51,7 +51,7 @@ public class ApiService : IApiService
         try
         {
             var response = await _httpClient.GetFromJsonAsync<ApiResDetail<Product>>(
-                $"/api/v1/Product/{id}");
+                $"/api/v1/product/detail/{id}");
 
             if (response is not null && response.Success)
             {

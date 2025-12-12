@@ -8,7 +8,7 @@
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400">
-  <Border Background="{ThemeResource BackgroundBrush}">
+  <Border Background="{ThemeResource PrimaryBrush}">
     <utu:ExtendedSplashScreen x:Name="Splash"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
@@ -18,16 +18,68 @@
         <DataTemplate>
           <Grid>
             <Grid.RowDefinitions>
-              <RowDefinition Height="2*" />
-              <RowDefinition />
+              <RowDefinition Height="*" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <ProgressRing IsActive="True"
-                  Grid.Row="1"
-                  VerticalAlignment="Center"
-                  HorizontalAlignment="Center"
-                  Height="100"
-                  Width="100" />
+            <!-- App Logo -->
+            <StackPanel Grid.Row="1" 
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center"
+                        Spacing="20">
+              <!-- Icon Circle -->
+              <Border Background="#FFFFFF"
+                      CornerRadius="40"
+                      Width="120"
+                      Height="120"
+                      HorizontalAlignment="Center"
+                      Opacity="0.95">
+                <Border Background="#5946D2"
+                        CornerRadius="32"
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                  <FontIcon Glyph="&#xE7BF;" 
+                           FontSize="48" 
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                </Border>
+              </Border>
+              
+              <!-- App Name -->
+              <TextBlock Text="Product Manager"
+                        FontSize="28"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        CharacterSpacing="40"/>
+              
+              <TextBlock Text="Quản lý bán hàng thông minh"
+                        FontSize="14"
+                        Foreground="White"
+                        Opacity="0.8"
+                        HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Loading Indicator -->
+            <StackPanel Grid.Row="2" 
+                        HorizontalAlignment="Center"
+                        Margin="0,48,0,0"
+                        Spacing="12">
+              <ProgressRing IsActive="True"
+                           Height="40"
+                           Width="40"
+                           Foreground="White"/>
+              <TextBlock Text="Đang tải..."
+                        FontSize="13"
+                        Foreground="White"
+                        Opacity="0.7"
+                        HorizontalAlignment="Center"/>
+            </StackPanel>
           </Grid>
         </DataTemplate>
       </utu:ExtendedSplashScreen.LoadingContentTemplate>

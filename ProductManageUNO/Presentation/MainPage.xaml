@@ -6,11 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ProductManageUNO.Presentation"
     xmlns:models="using:ProductManageUNO.Models"
+    xmlns:utu="using:Uno.Toolkit.UI"
     mc:Ignorable="d"
     x:Name="PageRoot"
     Background="{ThemeResource BackgroundBrush}">
 
-    <Grid RowDefinitions="Auto, Auto, *, Auto">
+    <Grid RowDefinitions="Auto, Auto, *, Auto" utu:SafeArea.Insets="Top">
         <!-- Header with gradient-like effect -->
         <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="24,16,24,20">
             <Grid.ColumnDefinitions>

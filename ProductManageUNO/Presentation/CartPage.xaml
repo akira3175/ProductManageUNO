@@ -7,10 +7,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ProductManageUNO.Presentation"
     xmlns:models="using:ProductManageUNO.Models"
+    xmlns:utu="using:Uno.Toolkit.UI"
     mc:Ignorable="d"
     Background="{ThemeResource BackgroundBrush}">
 
-    <Grid RowDefinitions="Auto, *, Auto">
+    <Grid RowDefinitions="Auto, *, Auto" utu:SafeArea.Insets="Top">
         <!-- Header -->
         <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="16,14,20,18">
             <Grid.ColumnDefinitions>
@@ -174,7 +175,7 @@
                                                         CornerRadius="10"
                                                         Tag="{Binding}"
                                                         Click="DecreaseQuantity_Click">
-                                                    <FontIcon Glyph="&#xE738;" FontSize="14"/>
+                                                    <TextBlock Text="−" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource PrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Button>
 
                                                 <Border Background="{ThemeResource SurfaceBrush}"
@@ -196,7 +197,7 @@
                                                         CornerRadius="10"
                                                         Tag="{Binding}"
                                                         Click="IncreaseQuantity_Click">
-                                                    <FontIcon Glyph="&#xE710;" FontSize="14"/>
+                                                    <TextBlock Text="+" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource PrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Button>
                                             </StackPanel>
                                         </Border>

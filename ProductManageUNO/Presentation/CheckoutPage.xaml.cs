@@ -22,6 +22,7 @@ public sealed partial class CheckoutPage : Page
     {
         this.InitializeComponent();
         Resources["BoolToVisibilityConverter"] = new BoolToVisibilityConverter();
+        Resources["PriceFormatConverter"] = new PriceFormatConverter();
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)

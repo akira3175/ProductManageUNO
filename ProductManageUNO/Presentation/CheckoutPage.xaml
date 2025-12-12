@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="ProductManageUNO.Presentation.CheckoutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ProductManageUNO.Presentation"
+    xmlns:utu="using:Uno.Toolkit.UI"
     x:Name="PageRoot"
     Background="{ThemeResource BackgroundBrush}">
 
-    <Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto" utu:SafeArea.Insets="Top">
         <!-- Header -->
         <Grid Grid.Row="0" 
               Background="{ThemeResource PrimaryBrush}"
@@ -44,18 +45,7 @@
             <StackPanel Spacing="20">
                 
                 <!-- Error Message -->
-                <Border Background="{ThemeResource ErrorContainerColor}"
-                        CornerRadius="12"
-                        Padding="16"
-                        Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="{ThemeResource ErrorColor}"/>
-                        <TextBlock Text="{Binding ErrorMessage}"
-                                  Foreground="{ThemeResource ErrorColor}"
-                                  TextWrapping="Wrap"
-                                  VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
+                
 
                 <!-- Customer Info Form -->
                 <Border Background="{ThemeResource SurfaceBrush}"
@@ -159,8 +149,7 @@
                         </StackPanel>
 
                         <!-- Cart Items -->
-                        <ItemsControl x:Name="OrderItemsList"
-                                     ItemsSource="{Binding CartItems}">
+                        <ItemsControl x:Name="OrderItemsList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="{ThemeResource SurfaceVariantBrush}"
@@ -175,15 +164,20 @@
                                                           Foreground="{ThemeResource OnSurfaceBrush}"
                                                           TextTrimming="CharacterEllipsis"
                                                           MaxLines="1"/>
-                                                <TextBlock FontSize="13"
-                                                          Foreground="{ThemeResource OnSurfaceVariantBrush}">
-                                                    <Run Text="{Binding Quantity}"/>
-                                                    <Run Text=" × "/>
-                                                    <Run Text="{Binding Price}"/>
-                                                </TextBlock>
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <TextBlock Text="{Binding Quantity}"
+                                                              FontSize="13"
+                                                              Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                                    <TextBlock Text="×"
+                                                              FontSize="13"
+                                                              Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                                    <TextBlock Text="{Binding PriceFormatted}"
+                                                              FontSize="13"
+                                                              Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                                </StackPanel>
                                             </StackPanel>
                                             <TextBlock Grid.Column="1"
-                                                      Text="{Binding Subtotal}"
+                                                      Text="{Binding SubtotalFormatted}"
                                                       FontSize="15"
                                                       FontWeight="Bold"
                                                       Foreground="{ThemeResource PrimaryBrush}"
