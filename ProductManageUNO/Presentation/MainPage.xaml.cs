@@ -178,4 +178,64 @@ public sealed partial class MainPage : Page
             Console.WriteLine($"❌ Orders navigation error: {ex.Message}");
         }
     }
+    private ScrollViewer? _scrollViewer;
+
+    private void ProductListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        Console.WriteLine("🔵 ProductListView_Loaded fired");
+        
+        // Delay to ensure visual tree is ready
+        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+        {
+            if (sender is ListView listView)
+            {
+                _scrollViewer = FindChildOfType<ScrollViewer>(listView);
+                if (_scrollViewer != null)
+                {
+                    _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
+                    Console.WriteLine("✅ ScrollViewer hooked for infinite scroll");
+                }
+                else
+                {
+                    Console.WriteLine("❌ ScrollViewer NOT found in ListView");
+                }
+            }
+        });
+    }
+
+    private void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (_scrollViewer != null && _viewModel != null)
+        {
+            var verticalOffset = _scrollViewer.VerticalOffset;
+            var maxOffset = _scrollViewer.ScrollableHeight;
+            var extentHeight = _scrollViewer.ExtentHeight;
+            var viewportHeight = _scrollViewer.ViewportHeight;
+
+            Console.WriteLine($"📜 Scroll: offset={verticalOffset:F0}, max={maxOffset:F0}, extent={extentHeight:F0}, viewport={viewportHeight:F0}");
+
+            // Check if near bottom (within 200 pixels)
+            if (maxOffset > 0 && verticalOffset >= maxOffset - 200)
+            {
+                Console.WriteLine("📄 Near bottom, loading more...");
+                _viewModel.LoadMoreCommand.Execute(null);
+            }
+        }
+    }
+
+    private static T? FindChildOfType<T>(DependencyObject parent) where T : DependencyObject
+    {
+        if (parent == null) return default;
+
+        int count = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < count; i++)
+        {
+            var child = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(parent, i);
+            if (child is T result) return result;
+
+            var found = FindChildOfType<T>(child);
+            if (found != null) return found;
+        }
+        return default;
+    }
 }

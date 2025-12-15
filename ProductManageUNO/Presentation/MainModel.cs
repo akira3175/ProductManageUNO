@@ -18,6 +18,9 @@ public partial class MainModel : ObservableObject
     private bool _isLoading;
 
     [ObservableProperty]
+    private bool _isLoadingMore;
+
+    [ObservableProperty]
     private string _searchText = string.Empty;
 
     [ObservableProperty]
@@ -29,8 +32,14 @@ public partial class MainModel : ObservableObject
     [ObservableProperty]
     private int _cartItemCount = 0;
 
+    [ObservableProperty]
+    private bool _hasMoreItems = true;
+
+    private const int PageSize = 10;
+
     public ObservableCollection<Product> Products { get; } = new();
     private List<Product> _allProducts = new();
+    private int _displayedCount = 0;
 
     public MainModel(IApiService apiService, ICartService cartService)
     {
@@ -45,6 +54,8 @@ public partial class MainModel : ObservableObject
     private async Task LoadData()
     {
         Console.WriteLine("🔵 LoadDataCommand triggered");
+        _displayedCount = 0;
+        HasMoreItems = true;
         await LoadDataAsync();
     }
 
@@ -61,17 +72,17 @@ public partial class MainModel : ObservableObject
             IsLoading = true;
             Console.WriteLine("🌐 Loading data...");
 
-            var data = await _apiService.GetProductsAsync(CurrentPage, 50);
+            // Load all data from API (cached locally)
+            var data = await _apiService.GetProductsAsync(1, 200);
             _allProducts = data ?? new List<Product>();
-
-            Products.Clear();
-            foreach (var item in _allProducts)
-            {
-                Products.Add(item);
-            }
-
             TotalItems = _allProducts.Count;
-            Console.WriteLine($"✅ Loaded {TotalItems} products");
+
+            // Clear and load first batch
+            Products.Clear();
+            _displayedCount = 0;
+            LoadMoreItems();
+
+            Console.WriteLine($"✅ Loaded {Products.Count}/{TotalItems} products");
         }
         catch (Exception ex)
         {
@@ -84,6 +95,43 @@ public partial class MainModel : ObservableObject
             IsLoading = false;
             Console.WriteLine("✅ Loading complete");
         }
+    }
+
+    [RelayCommand]
+    private void LoadMore()
+    {
+        if (!IsLoadingMore && HasMoreItems && !IsLoading)
+        {
+            LoadMoreItems();
+        }
+    }
+
+    private void LoadMoreItems()
+    {
+        if (_displayedCount >= _allProducts.Count)
+        {
+            HasMoreItems = false;
+            return;
+        }
+
+        IsLoadingMore = true;
+
+        var itemsToAdd = _allProducts
+            .Skip(_displayedCount)
+            .Take(PageSize)
+            .ToList();
+
+        foreach (var item in itemsToAdd)
+        {
+            Products.Add(item);
+        }
+
+        _displayedCount += itemsToAdd.Count;
+        HasMoreItems = _displayedCount < _allProducts.Count;
+
+        Console.WriteLine($"📄 Loaded more: {Products.Count}/{TotalItems} (HasMore: {HasMoreItems})");
+
+        IsLoadingMore = false;
     }
 
     [RelayCommand]

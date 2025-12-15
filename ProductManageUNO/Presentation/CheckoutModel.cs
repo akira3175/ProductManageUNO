@@ -174,8 +174,8 @@ public partial class CheckoutModel : ObservableObject
             var orderRequest = new CreateOrderRequest
             {
                 CustomerId = customerResult.Id, // Use ID from API response
-                UserId = 1, // Default user ID
-                PromotionId = 1, // Default promotion ID
+                //UserId = 1, // Default user ID
+                //PromotionId = 1, // Default promotion ID
                 OrderDate = DateTime.Now,
                 Status = "pending",
                 TotalAmount = TotalAmount,

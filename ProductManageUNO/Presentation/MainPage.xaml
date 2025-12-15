@@ -20,7 +20,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="4">
-                <TextBlock Text="{Binding Title}" 
+                <TextBlock Text="Danh Sách Sản Phẩm" 
                           FontSize="28" 
                           FontWeight="Bold"
                           Foreground="{ThemeResource OnPrimaryBrush}"
@@ -74,7 +74,8 @@
                   ItemsSource="{Binding Products}" 
                   Padding="16,12"
                   SelectionMode="None"
-                  IsItemClickEnabled="False">
+                  IsItemClickEnabled="False"
+                  Loaded="ProductListView_Loaded">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
