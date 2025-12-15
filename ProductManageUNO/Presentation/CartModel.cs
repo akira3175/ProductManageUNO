@@ -22,6 +22,14 @@ public partial class CartModel : ObservableObject
     [ObservableProperty]
     private int _totalItems = 0;
 
+    // Pre-formatted total items for UI binding (bypasses converter issues)
+    public string TotalItemsFormatted => $"{TotalItems} sản phẩm";
+
+    partial void OnTotalItemsChanged(int value)
+    {
+        OnPropertyChanged(nameof(TotalItemsFormatted));
+    }
+
     [ObservableProperty]
     private decimal _totalAmount = 0;
 
@@ -82,10 +90,14 @@ public partial class CartModel : ObservableObject
                     CartItems.Add(item);
                 }
                 
+                // Update TotalItems immediately from loaded items
+                TotalItems = CartItems.Count;
+                IsEmpty = CartItems.Count == 0;
+                
                 // Update totals (these are simple properties, but safe to do on UI thread)
                  _ = RefreshTotalsAsync();
                  
-                 Console.WriteLine($"✅ Loaded {CartItems.Count} items on UI Thread");
+                 Console.WriteLine($"✅ Loaded {CartItems.Count} items on UI Thread, TotalItems={TotalItems}");
             }
 
             if (dispatcherQueue != null && !dispatcherQueue.HasThreadAccess)
@@ -166,6 +178,7 @@ public partial class CartModel : ObservableObject
     {
         TotalItems = await _cartService.GetTotalItemsAsync();
         TotalAmount = await _cartService.GetTotalAmountAsync();
+        Title = "Giỏ hàng";
         IsEmpty = CartItems.Count == 0;
 
         // Force explicit notification for all dependent properties

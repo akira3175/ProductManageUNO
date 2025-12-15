@@ -13,7 +13,7 @@
 
     <Grid RowDefinitions="Auto, *, Auto" utu:SafeArea.Insets="Top">
         <!-- Header -->
-        <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="16,14,20,18">
+        <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="16,14,20,18" MinHeight="80">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -31,12 +31,12 @@
             </Button>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0,0,0" Spacing="4">
-                <TextBlock Text="{Binding Title}" 
+                <TextBlock Text="{Binding Title, FallbackValue='Giỏ Hàng'}" 
                           FontSize="26" 
                           FontWeight="Bold"
                           Foreground="{ThemeResource OnPrimaryBrush}"
                           CharacterSpacing="20"/>
-                <TextBlock Text="{Binding TotalItems, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0} sản phẩm'}"
+                <TextBlock Text="{Binding TotalItemsFormatted, FallbackValue='0 sản phẩm'}"
                           FontSize="13"
                           Opacity="0.85"
                           Foreground="{ThemeResource OnPrimaryBrush}"/>

@@ -40,6 +40,7 @@ public partial class MainModel : ObservableObject
     public ObservableCollection<Product> Products { get; } = new();
     private List<Product> _allProducts = new();
     private int _displayedCount = 0;
+    private bool _isLoadingMoreInProgress = false;
 
     public MainModel(IApiService apiService, ICartService cartService)
     {
@@ -80,7 +81,7 @@ public partial class MainModel : ObservableObject
             // Clear and load first batch
             Products.Clear();
             _displayedCount = 0;
-            LoadMoreItems();
+            await LoadMoreItemsAsync();
 
             Console.WriteLine($"✅ Loaded {Products.Count}/{TotalItems} products");
         }
@@ -98,15 +99,29 @@ public partial class MainModel : ObservableObject
     }
 
     [RelayCommand]
-    private void LoadMore()
+    private async Task LoadMore()
     {
-        if (!IsLoadingMore && HasMoreItems && !IsLoading)
+        // Prevent multiple concurrent LoadMore calls
+        if (_isLoadingMoreInProgress || !HasMoreItems || IsLoading)
         {
-            LoadMoreItems();
+            Console.WriteLine($"📄 LoadMore skipped: inProgress={_isLoadingMoreInProgress}, HasMoreItems={HasMoreItems}, IsLoading={IsLoading}");
+            return;
+        }
+
+        _isLoadingMoreInProgress = true;
+        try
+        {
+            await LoadMoreItemsAsync();
+        }
+        finally
+        {
+            // Small delay to prevent rapid-fire scroll events
+            await Task.Delay(100);
+            _isLoadingMoreInProgress = false;
         }
     }
 
-    private void LoadMoreItems()
+    private async Task LoadMoreItemsAsync()
     {
         if (_displayedCount >= _allProducts.Count)
         {
@@ -115,6 +130,9 @@ public partial class MainModel : ObservableObject
         }
 
         IsLoadingMore = true;
+
+        // Small delay to allow UI to update loading state
+        await Task.Delay(50);
 
         var itemsToAdd = _allProducts
             .Skip(_displayedCount)
