@@ -31,7 +31,7 @@
             </Button>
 
             <TextBlock Grid.Column="1"
-                      Text="{Binding Title}"
+                      Text="Thanh toán"
                       FontSize="24"
                       FontWeight="Bold"
                       Foreground="{ThemeResource OnPrimaryBrush}"
@@ -200,7 +200,7 @@
                                       VerticalAlignment="Center"/>
                             <TextBlock x:Name="TotalAmountText"
                                       Grid.Column="1"
-                                      Text="{Binding TotalAmountFormatted}"
+                                      Text="0đ"
                                       FontSize="24"
                                       FontWeight="Bold"
                                       Foreground="{ThemeResource PrimaryBrush}"/>

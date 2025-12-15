@@ -11,6 +11,7 @@ namespace ProductManageUNO.Presentation;
 
 public sealed partial class CheckoutPage : Page
 {
+    private CheckoutModel? _viewModel;
     private ICartService? _cartService;
     private ICustomerService? _customerService;
     private IOrderService? _orderService;
@@ -31,13 +32,38 @@ public sealed partial class CheckoutPage : Page
 
         if (Application.Current is App app && app.Host != null)
         {
+            // Get CheckoutModel and set as DataContext
+            _viewModel = app.Host.Services.GetService(typeof(CheckoutModel)) as CheckoutModel;
+            DataContext = _viewModel;
+
             // Get services directly
             _cartService = app.Host.Services.GetService(typeof(ICartService)) as ICartService;
             _customerService = app.Host.Services.GetService(typeof(ICustomerService)) as ICustomerService;
             _orderService = app.Host.Services.GetService(typeof(IOrderService)) as IOrderService;
             _orderHistoryService = app.Host.Services.GetService(typeof(IOrderHistoryService)) as IOrderHistoryService;
 
-            await LoadDataAsync();
+            // Load data via ViewModel for bindings to work
+            if (_viewModel != null)
+            {
+                await _viewModel.LoadDataCommand.ExecuteAsync(null);
+                
+                // Also update local variables for PlaceOrderButton_Click
+                _cartItems = _viewModel.CartItems.ToList();
+                _totalAmount = _viewModel.TotalAmount;
+                
+                // Set OrderItemsList explicitly (in case binding issues)
+                OrderItemsList.ItemsSource = _viewModel.CartItems;
+                
+                // ✅ DIRECT UI UPDATE - bypass binding issues on UNO Platform
+                TotalAmountText.Text = _viewModel.TotalAmountFormatted;
+                
+                Console.WriteLine($"✅ CheckoutPage: DataContext set, TotalAmount={_viewModel.TotalAmount}, Formatted={_viewModel.TotalAmountFormatted}");
+            }
+            else
+            {
+                // Fallback to direct loading if ViewModel not available
+                await LoadDataAsync();
+            }
         }
     }
 
