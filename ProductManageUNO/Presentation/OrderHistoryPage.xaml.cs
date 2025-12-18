@@ -56,6 +56,15 @@ public sealed partial class OrderHistoryPage : Page
         }
     }
 
+    private void OrderItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is int orderId)
+        {
+            Console.WriteLine($"🔵 Navigating to order detail: {orderId}");
+            Frame.Navigate(typeof(OrderDetailPage), orderId);
+        }
+    }
+
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
         if (Frame.CanGoBack)

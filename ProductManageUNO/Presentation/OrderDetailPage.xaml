@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="ProductManageUNO.Presentation.OrderDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ProductManageUNO.Presentation"
+    xmlns:models="using:ProductManageUNO.Models"
+    xmlns:utu="using:Uno.Toolkit.UI"
+    Background="{ThemeResource BackgroundBrush}">
+
+    <Grid RowDefinitions="Auto, *" utu:SafeArea.Insets="Top">
+        <!-- Header -->
+        <Grid Grid.Row="0" Background="{ThemeResource PrimaryBrush}" Padding="16,14,20,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" 
+                    x:Name="BackButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    VerticalAlignment="Center"
+                    Click="BackButton_Click"
+                    Padding="10"
+                    CornerRadius="20"
+                    ToolTipService.ToolTip="Quay lại">
+                <SymbolIcon Symbol="Back" Foreground="{ThemeResource OnPrimaryBrush}"/>
+            </Button>
+
+            <TextBlock Grid.Column="1"
+                      Text="Chi Tiết Hóa Đơn" 
+                      FontSize="24" 
+                      FontWeight="Bold"
+                      Foreground="{ThemeResource OnPrimaryBrush}"
+                      VerticalAlignment="Center"
+                      Margin="16,0,0,0"
+                      CharacterSpacing="20"/>
+
+            <ProgressRing Grid.Column="2"
+                         x:Name="HeaderProgressRing"
+                         IsActive="False" 
+                         Width="26" 
+                         Height="26"
+                         Foreground="{ThemeResource OnPrimaryBrush}"/>
+        </Grid>
+
+        <!-- Content Area -->
+        <Grid Grid.Row="1">
+            <!-- Loading State -->
+            <StackPanel x:Name="LoadingState"
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center" 
+                       Spacing="20"
+                       Visibility="Collapsed">
+                <ProgressRing IsActive="True" 
+                             Width="56" 
+                             Height="56"
+                             Foreground="{ThemeResource PrimaryBrush}"/>
+                <TextBlock Text="Đang tải dữ liệu..."
+                          FontSize="16"
+                          FontWeight="SemiBold"
+                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                          HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel x:Name="ErrorState"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Spacing="20"
+                       Visibility="Collapsed">
+                <Border Background="{ThemeResource ErrorContainerBrush}"
+                        CornerRadius="50"
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center">
+                    <FontIcon Glyph="&#xE783;" 
+                             FontSize="48" 
+                             Foreground="{ThemeResource OnErrorContainerBrush}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="Không thể tải hóa đơn"
+                          FontSize="20"
+                          FontWeight="SemiBold"
+                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                          HorizontalAlignment="Center"/>
+                <Button x:Name="RetryButton"
+                        Content="Thử lại"
+                        Click="RetryButton_Click"
+                        HorizontalAlignment="Center"
+                        Background="{ThemeResource PrimaryBrush}"
+                        Foreground="{ThemeResource OnPrimaryBrush}"
+                        Padding="24,12"
+                        CornerRadius="12"/>
+            </StackPanel>
+
+            <!-- Order Content -->
+            <ScrollViewer x:Name="ContentScrollViewer" 
+                         Padding="16,20,16,16"
+                         Visibility="Collapsed">
+                <StackPanel Spacing="16">
+                    <!-- Order Summary Card -->
+                    <Border Background="{ThemeResource SurfaceBrush}"
+                           CornerRadius="16"
+                           Padding="22,20"
+                           BorderBrush="{ThemeResource OutlineVariantBrush}"
+                           BorderThickness="1">
+                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+                            <!-- Header: Order ID + Status -->
+                            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                                    <Border Background="{ThemeResource PrimaryContainerBrush}" 
+                                            CornerRadius="8" 
+                                            Padding="8">
+                                        <FontIcon Glyph="&#xE7BF;" FontSize="18" Foreground="{ThemeResource PrimaryBrush}"/>
+                                    </Border>
+                                    <TextBlock x:Name="OrderIdText"
+                                              FontSize="22" 
+                                              FontWeight="Bold" 
+                                              Foreground="{ThemeResource OnSurfaceBrush}" 
+                                              VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Border x:Name="StatusBadge"
+                                       Grid.Column="1" 
+                                       Background="{ThemeResource TertiaryContainerBrush}"
+                                       CornerRadius="8"
+                                       Padding="12,6">
+                                    <TextBlock x:Name="StatusText"
+                                              FontSize="12"
+                                              FontWeight="SemiBold"
+                                              Foreground="{ThemeResource OnTertiaryContainerBrush}"/>
+                                </Border>
+                            </Grid>
+
+                            <!-- Order Date -->
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10">
+                                <FontIcon Glyph="&#xEC92;" FontSize="14" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                <TextBlock x:Name="OrderDateText"
+                                          FontSize="14"
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                            </StackPanel>
+
+                            <!-- User Info -->
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10">
+                                <FontIcon Glyph="&#xE77B;" FontSize="14" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                                <TextBlock x:Name="UserText"
+                                          FontSize="14"
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Customer Info Card -->
+                    <Border Background="{ThemeResource SecondaryContainerBrush}"
+                           CornerRadius="16"
+                           Padding="20"
+                           BorderBrush="{ThemeResource OutlineVariantBrush}"
+                           BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <!-- Header -->
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Border Background="{ThemeResource OnSecondaryContainerBrush}" 
+                                        CornerRadius="10" 
+                                        Padding="10"
+                                        Opacity="0.15">
+                                    <FontIcon Glyph="&#xE77B;" 
+                                              FontSize="20"
+                                              Foreground="{ThemeResource OnSecondaryContainerBrush}"/>
+                                </Border>
+                                <TextBlock Text="Thông tin khách hàng"
+                                          FontSize="18"
+                                          FontWeight="SemiBold"
+                                          Foreground="{ThemeResource OnSecondaryContainerBrush}"
+                                          VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Customer Details -->
+                            <StackPanel Spacing="12" Margin="0,4,0,0">
+                                <!-- Name -->
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE77B;" 
+                                             FontSize="15"
+                                             Foreground="{ThemeResource OnSecondaryContainerBrush}"
+                                             VerticalAlignment="Top"
+                                             Margin="0,3,0,0"/>
+                                    <TextBlock x:Name="CustomerNameText"
+                                              FontSize="16"
+                                              FontWeight="SemiBold"
+                                              Foreground="{ThemeResource OnSecondaryContainerBrush}"
+                                              TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <!-- Phone -->
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE717;" 
+                                             FontSize="15"
+                                             Foreground="{ThemeResource OnSecondaryContainerBrush}"
+                                             VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="CustomerPhoneText"
+                                              FontSize="14"
+                                              Foreground="{ThemeResource OnSecondaryContainerBrush}"/>
+                                </StackPanel>
+
+                                <!-- Email -->
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE119;" 
+                                             FontSize="15"
+                                             Foreground="{ThemeResource OnSecondaryContainerBrush}"
+                                             VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="CustomerEmailText"
+                                              FontSize="14"
+                                              Foreground="{ThemeResource OnSecondaryContainerBrush}"
+                                              TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <!-- Address -->
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE707;" 
+                                             FontSize="15"
+                                             Foreground="{ThemeResource OnSecondaryContainerBrush}"
+                                             VerticalAlignment="Top"
+                                             Margin="0,3,0,0"/>
+                                    <TextBlock x:Name="CustomerAddressText"
+                                              FontSize="14"
+                                              Foreground="{ThemeResource OnSecondaryContainerBrush}"
+                                              TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Order Items Card -->
+                    <Border Background="{ThemeResource SurfaceBrush}"
+                           CornerRadius="16"
+                           Padding="20"
+                           BorderBrush="{ThemeResource OutlineVariantBrush}"
+                           BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <!-- Header -->
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Border Background="{ThemeResource PrimaryContainerBrush}" 
+                                        CornerRadius="10" 
+                                        Padding="10">
+                                    <FontIcon Glyph="&#xE7BF;" 
+                                              FontSize="20"
+                                              Foreground="{ThemeResource PrimaryBrush}"/>
+                                </Border>
+                                <TextBlock Text="Sản phẩm đặt mua"
+                                          FontSize="18"
+                                          FontWeight="SemiBold"
+                                          Foreground="{ThemeResource OnSurfaceBrush}"
+                                          VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Items List -->
+                            <ItemsControl x:Name="OrderItemsList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="models:OrderItem">
+                                        <Border Margin="0,0,0,12" 
+                                               Background="{ThemeResource SurfaceVariantBrush}"
+                                               CornerRadius="12"
+                                               Padding="16">
+                                            <Grid RowDefinitions="Auto,Auto" RowSpacing="8">
+                                                <!-- Product Name -->
+                                                <TextBlock Grid.Row="0"
+                                                          Text="{x:Bind ProductName}"
+                                                          FontSize="15"
+                                                          FontWeight="SemiBold"
+                                                          Foreground="{ThemeResource OnSurfaceBrush}"
+                                                          TextWrapping="Wrap"/>
+                                                
+                                                <!-- Quantity, Price, Subtotal -->
+                                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
+                                                        <TextBlock FontSize="13" Foreground="{ThemeResource OnSurfaceVariantBrush}">
+                                                            <Run Text="SL: "/>
+                                                            <Run Text="{x:Bind Quantity}" FontWeight="SemiBold"/>
+                                                        </TextBlock>
+                                                        <TextBlock FontSize="13" Foreground="{ThemeResource OnSurfaceVariantBrush}">
+                                                            <Run Text="Đơn giá: "/>
+                                                            <Run Text="{x:Bind PriceFormatted}" FontWeight="SemiBold"/>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1"
+                                                              Text="{x:Bind SubtotalFormatted}"
+                                                              FontSize="16"
+                                                              FontWeight="Bold"
+                                                              Foreground="{ThemeResource PrimaryBrush}"/>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Total Card -->
+                    <Border Background="{ThemeResource TertiaryContainerBrush}"
+                           CornerRadius="16"
+                           Padding="22,18"
+                           BorderBrush="{ThemeResource OutlineVariantBrush}"
+                           BorderThickness="1">
+                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
+                            <!-- Discount (if any) -->
+                            <Grid x:Name="DiscountRow" Grid.Row="0" ColumnDefinitions="*,Auto" Visibility="Collapsed">
+                                <TextBlock Grid.Column="0"
+                                          Text="Giảm giá:"
+                                          FontSize="14"
+                                          Foreground="{ThemeResource OnTertiaryContainerBrush}"/>
+                                <TextBlock x:Name="DiscountText"
+                                          Grid.Column="1"
+                                          FontSize="14"
+                                          FontWeight="SemiBold"
+                                          Foreground="{ThemeResource OnTertiaryContainerBrush}"/>
+                            </Grid>
+
+                            <!-- Divider -->
+                            <Border x:Name="DiscountDivider" Grid.Row="1" Height="1" 
+                                   Background="{ThemeResource OnTertiaryContainerBrush}" 
+                                   Opacity="0.2"
+                                   Visibility="Collapsed"/>
+
+                            <!-- Total -->
+                            <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0"
+                                          Text="TỔNG CỘNG"
+                                          FontSize="14"
+                                          FontWeight="Bold"
+                                          Foreground="{ThemeResource OnTertiaryContainerBrush}"
+                                          VerticalAlignment="Center"
+                                          CharacterSpacing="80"/>
+                                <TextBlock x:Name="TotalText"
+                                          Grid.Column="1"
+                                          FontSize="28"
+                                          FontWeight="Bold"
+                                          Foreground="{ThemeResource OnTertiaryContainerBrush}"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>

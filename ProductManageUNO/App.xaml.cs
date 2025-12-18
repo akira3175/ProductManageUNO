@@ -53,6 +53,7 @@ public partial class App : Application
                     services.AddTransient<ICartService, CartService>();
                     services.AddTransient<ICustomerService, CustomerService>();
                     services.AddTransient<IOrderHistoryService, OrderHistoryService>();
+                    services.AddHttpClient<OrderHistoryService>();
                     services.AddHttpClient<OrderService>();
                     services.AddTransient<IOrderService, OrderService>();
                     services.AddTransient<MainModel>();
