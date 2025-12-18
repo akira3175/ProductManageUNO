@@ -48,13 +48,12 @@
                               Height="26"
                               Foreground="{ThemeResource OnPrimaryBrush}"/>
 
-                <Button Command="{Binding ClearCartCommand}"
+                <Button Click="ClearAllButton_Click"
                         Background="Transparent"
                         BorderThickness="0"
                         Padding="10"
                         CornerRadius="20"
-                        ToolTipService.ToolTip="Xóa tất cả"
-                        IsEnabled="{Binding IsEmpty, Converter={StaticResource InverseBoolConverter}}">
+                        ToolTipService.ToolTip="Xóa tất cả">
                     <SymbolIcon Symbol="Delete" Foreground="{ThemeResource OnPrimaryBrush}"/>
                 </Button>
             </StackPanel>

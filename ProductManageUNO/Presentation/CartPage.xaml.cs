@@ -116,6 +116,20 @@ public sealed partial class CartPage : Page
             Console.WriteLine($"🔄 Force refreshed. Count: {_viewModel.CartItems.Count}, Total: {_viewModel.TotalAmountFormatted}");
         }
     }
+    
+    private async void ClearAllButton_Click(object sender, RoutedEventArgs e)
+    {
+        Console.WriteLine("🗑️ Clear All button clicked!");
+        if (_viewModel != null && _viewModel.CartItems.Count > 0)
+        {
+            await _viewModel.ClearCartCommand.ExecuteAsync(null);
+            ForceRefreshItemsSource();
+        }
+        else
+        {
+            Console.WriteLine("⚠️ ViewModel null or cart empty");
+        }
+    }
 
     private void CheckoutButton_Click(object sender, RoutedEventArgs e)
     {

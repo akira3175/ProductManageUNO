@@ -159,7 +159,9 @@ public partial class CartModel : ObservableObject
     [RelayCommand]
     private async Task ClearCart()
     {
+        Console.WriteLine("🗑️ ClearCart command triggered!");
         var success = await _cartService.ClearCartAsync();
+        Console.WriteLine($"🗑️ Clear cart result: {success}");
         if (success)
         {
             await LoadCartAsync();
