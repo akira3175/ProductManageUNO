@@ -11,6 +11,7 @@ namespace ProductManageUNO.Presentation;
 public sealed partial class MainPage : Page
 {
     private MainModel? _viewModel;
+    private string? _pendingSearchText;
 
     public MainPage()
     {
@@ -24,7 +25,7 @@ public sealed partial class MainPage : Page
         Console.WriteLine("🔵 MainPage Constructor");
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         Console.WriteLine("🔵 OnNavigatedTo called");
@@ -35,12 +36,38 @@ public sealed partial class MainPage : Page
             if (Application.Current is App app && app.Host != null)
             {
                 Console.WriteLine("🔵 App.Host found");
+                
+                // Unsubscribe old if exists
+                if (_viewModel != null)
+                {
+                    _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+                }
+                
                 _viewModel = app.Host.Services.GetService<MainModel>();
 
                 if (_viewModel != null)
                 {
                     DataContext = _viewModel;
-                    Console.WriteLine("✅ ViewModel set successfully");
+                    Console.WriteLine($"✅ ViewModel set successfully, CartItemCount: {_viewModel.CartItemCount}");
+                    
+                    // Subscribe để update badge khi cart count thay đổi
+                    _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+                    
+                    // Force load cart count từ service
+                    await _viewModel.RefreshCartCountAsync();
+                    Console.WriteLine($"✅ After refresh, CartItemCount: {_viewModel.CartItemCount}");
+                    
+                    // Update badge ngay
+                    UpdateCartBadge();
+                    
+                    // Apply pending search nếu có
+                    if (!string.IsNullOrEmpty(_pendingSearchText))
+                    {
+                        Console.WriteLine($"🔍 Applying pending search: '{_pendingSearchText}'");
+                        _viewModel.SearchText = _pendingSearchText;
+                        _viewModel.SearchCommand.Execute(null);
+                        _pendingSearchText = null;
+                    }
                 }
                 else
                 {
@@ -55,6 +82,45 @@ public sealed partial class MainPage : Page
         catch (Exception ex)
         {
             Console.WriteLine($"❌ OnNavigatedTo Error: {ex.Message}");
+        }
+    }
+    
+    private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainModel.CartItemCount))
+        {
+            DispatcherQueue.TryEnqueue(() => UpdateCartBadge());
+        }
+    }
+    
+    private void UpdateCartBadge()
+    {
+        if (_viewModel == null || CartBadgeText == null || CartBadge == null)
+        {
+            Console.WriteLine("⚠️ Cannot update badge - elements not ready");
+            return;
+        }
+        
+        var count = _viewModel.CartItemCount;
+        Console.WriteLine($"🛒 Updating badge: {count}");
+        
+        CartBadgeText.Text = count.ToString();
+        CartBadge.Visibility = count > 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+    
+    private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        Console.WriteLine($"🔍 SearchBox_TextChanged fired! Text: '{SearchBox.Text}'");
+        
+        if (_viewModel != null)
+        {
+            _viewModel.SearchText = SearchBox.Text;
+            _viewModel.SearchCommand.Execute(null);
+        }
+        else
+        {
+            Console.WriteLine("⚠️ ViewModel is null, storing search for later");
+            _pendingSearchText = SearchBox.Text;
         }
     }
 

@@ -35,7 +35,7 @@ public partial class MainModel : ObservableObject
     [ObservableProperty]
     private bool _hasMoreItems = true;
 
-    private const int PageSize = 10;
+    private const int PageSize = 50;
 
     public ObservableCollection<Product> Products { get; } = new();
     private List<Product> _allProducts = new();
@@ -84,6 +84,9 @@ public partial class MainModel : ObservableObject
             await LoadMoreItemsAsync();
 
             Console.WriteLine($"✅ Loaded {Products.Count}/{TotalItems} products");
+            
+            // Refresh cart count after products loaded
+            await UpdateCartCountAsync();
         }
         catch (Exception ex)
         {
@@ -155,13 +158,18 @@ public partial class MainModel : ObservableObject
     [RelayCommand]
     private void Search()
     {
+        Console.WriteLine($"🔍 Search triggered with text: '{SearchText}'");
+        Console.WriteLine($"🔍 Total products in _allProducts: {_allProducts.Count}");
+        
         if (string.IsNullOrWhiteSpace(SearchText))
         {
+            Console.WriteLine("🔍 SearchText is empty, showing all products");
             Products.Clear();
             foreach (var item in _allProducts)
             {
                 Products.Add(item);
             }
+            Console.WriteLine($"🔍 Products count after clear search: {Products.Count}");
         }
         else
         {
@@ -171,11 +179,14 @@ public partial class MainModel : ObservableObject
                            p.Category?.CategoryName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
+            Console.WriteLine($"🔍 Filtered products count: {filtered.Count}");
+            
             Products.Clear();
             foreach (var item in filtered)
             {
                 Products.Add(item);
             }
+            Console.WriteLine($"🔍 Products count after filter: {Products.Count}");
         }
     }
 
@@ -232,9 +243,20 @@ public partial class MainModel : ObservableObject
             CartItemCount = 0;
         }
     }
+    
+    public async Task RefreshCartCountAsync()
+    {
+        await UpdateCartCountAsync();
+    }
 
     partial void OnSearchTextChanged(string value)
     {
+        Console.WriteLine($"🔍 OnSearchTextChanged called with value: '{value}'");
         SearchCommand.Execute(null);
+    }
+    
+    partial void OnCartItemCountChanged(int value)
+    {
+        Console.WriteLine($"🛒 CartItemCount changed to: {value}");
     }
 }

@@ -33,11 +33,6 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
-                <ProgressRing IsActive="{Binding IsLoading}" 
-                              Width="28" 
-                              Height="28"
-                              Foreground="{ThemeResource OnPrimaryBrush}"/>
-
                 <Button Command="{Binding LoadDataCommand}"
                         Background="Transparent"
                         BorderThickness="0"
@@ -59,8 +54,10 @@
             <Border Background="{ThemeResource SurfaceVariantBrush}"
                     CornerRadius="12"
                     Padding="4">
-                <TextBox PlaceholderText="🔍 Tìm kiếm sản phẩm, mã vạch, danh mục..."
+                <TextBox x:Name="SearchBox"
+                         PlaceholderText="🔍 Tìm kiếm sản phẩm, mã vạch, danh mục..."
                          Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         TextChanged="SearchBox_TextChanged"
                          Background="Transparent"
                          BorderThickness="0"
                          Padding="14,12"
@@ -256,7 +253,8 @@
                         <Grid>
                             <FontIcon Glyph="&#xE7BF;" FontSize="22" Foreground="{ThemeResource OnSurfaceVariantBrush}"/>
                             <!-- Cart Badge -->
-                            <Border Background="{ThemeResource ErrorColor}"
+                            <Border x:Name="CartBadge"
+                                   Background="{ThemeResource ErrorColor}"
                                    CornerRadius="10"
                                    MinWidth="20"
                                    Height="20"
@@ -264,8 +262,8 @@
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    Margin="0,-8,-12,0"
-                                   Visibility="{Binding CartItemCount, Converter={StaticResource CountToVisibilityConverter}}">
-                                <TextBlock Text="{Binding CartItemCount}"
+                                   Visibility="Collapsed">
+                                <TextBlock x:Name="CartBadgeText"
                                           FontSize="11"
                                           FontWeight="Bold"
                                           Foreground="White"
