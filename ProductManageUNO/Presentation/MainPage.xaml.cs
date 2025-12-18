@@ -12,6 +12,7 @@ public sealed partial class MainPage : Page
 {
     private MainModel? _viewModel;
     private string? _pendingSearchText;
+    private CancellationTokenSource? _searchDebounceToken;
 
     public MainPage()
     {
@@ -23,6 +24,52 @@ public sealed partial class MainPage : Page
         Resources["CountToVisibilityConverter"] = new CountToVisibilityConverter();
 
         Console.WriteLine("🔵 MainPage Constructor");
+        
+        // Initialize ViewModel in Loaded event
+        this.Loaded += MainPage_Loaded;
+    }
+    
+    private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        Console.WriteLine("🔵 MainPage_Loaded fired");
+        
+        // Only initialize once
+        if (_viewModel != null) return;
+        
+        try
+        {
+            if (Application.Current is App app && app.Host != null)
+            {
+                Console.WriteLine("🔵 App.Host found in Loaded");
+                _viewModel = app.Host.Services.GetService<MainModel>();
+
+                if (_viewModel != null)
+                {
+                    DataContext = _viewModel;
+                    Console.WriteLine($"✅ ViewModel set in Loaded, CartItemCount: {_viewModel.CartItemCount}");
+                    
+                    // Subscribe for cart badge updates
+                    _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+                    
+                    // Refresh cart count
+                    await _viewModel.RefreshCartCountAsync();
+                    UpdateCartBadge();
+                    
+                    // Apply pending search if any
+                    if (!string.IsNullOrEmpty(_pendingSearchText))
+                    {
+                        Console.WriteLine($"🔍 Applying pending search in Loaded: '{_pendingSearchText}'");
+                        _viewModel.SearchText = _pendingSearchText;
+                        _viewModel.SearchCommand.Execute(null);
+                        _pendingSearchText = null;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ MainPage_Loaded Error: {ex.Message}");
+        }
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -108,19 +155,95 @@ public sealed partial class MainPage : Page
         CartBadge.Visibility = count > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
     
-    private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+    private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         Console.WriteLine($"🔍 SearchBox_TextChanged fired! Text: '{SearchBox.Text}'");
         
-        if (_viewModel != null)
+        // Cancel previous search nếu có
+        _searchDebounceToken?.Cancel();
+        _searchDebounceToken = new CancellationTokenSource();
+        var token = _searchDebounceToken.Token;
+        
+        try
         {
-            _viewModel.SearchText = SearchBox.Text;
-            _viewModel.SearchCommand.Execute(null);
+            // Debounce - đợi 300ms sau khi user ngừng gõ
+            await Task.Delay(300, token);
+            
+            // Lazy init ViewModel nếu chưa có
+            if (_viewModel == null)
+            {
+                Console.WriteLine("⚠️ ViewModel null, initializing now...");
+                await InitializeViewModelIfNeeded();
+            }
+            
+            // Sau 300ms, execute search
+            if (_viewModel != null)
+            {
+                _viewModel.SearchText = SearchBox.Text;
+                _viewModel.SearchCommand.Execute(null);
+                Console.WriteLine($"✅ Search executed: '{SearchBox.Text}'");
+                
+                // Update empty state after search
+                UpdateEmptyState();
+            }
+            else
+            {
+                Console.WriteLine("❌ ViewModel still null after init attempt");
+            }
         }
-        else
+        catch (TaskCanceledException)
         {
-            Console.WriteLine("⚠️ ViewModel is null, storing search for later");
-            _pendingSearchText = SearchBox.Text;
+            // User đã gõ ký tự mới, search này bị cancel
+            Console.WriteLine("🔍 Search cancelled - user still typing");
+        }
+    }
+    
+    private async Task InitializeViewModelIfNeeded()
+    {
+        if (_viewModel != null) return;
+        
+        try
+        {
+            if (Application.Current is App app && app.Host != null)
+            {
+                Console.WriteLine("🔵 Initializing ViewModel...");
+                _viewModel = app.Host.Services.GetService<MainModel>();
+
+                if (_viewModel != null)
+                {
+                    DataContext = _viewModel;
+                    Console.WriteLine($"✅ ViewModel initialized, CartItemCount: {_viewModel.CartItemCount}");
+                    
+                    // Subscribe for cart badge updates
+                    _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+                    
+                    // Refresh cart count
+                    await _viewModel.RefreshCartCountAsync();
+                    UpdateCartBadge();
+                }
+                else
+                {
+                    Console.WriteLine("❌ Failed to get MainModel from services");
+                }
+            }
+            else
+            {
+                Console.WriteLine("❌ App.Host is null");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ InitializeViewModelIfNeeded Error: {ex.Message}");
+        }
+    }
+    
+    private void UpdateEmptyState()
+    {
+        if (_viewModel != null && EmptyStateGrid != null)
+        {
+            bool isEmpty = _viewModel.Products.Count == 0;
+            EmptyStateGrid.Visibility = isEmpty ? Visibility.Visible : Visibility.Collapsed;
+            Console.WriteLine($"📊 Empty state: {EmptyStateGrid.Visibility}, Products: {_viewModel.Products.Count}");
         }
     }
 

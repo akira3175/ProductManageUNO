@@ -55,7 +55,7 @@
                     CornerRadius="12"
                     Padding="4">
                 <TextBox x:Name="SearchBox"
-                         PlaceholderText="🔍 Tìm kiếm sản phẩm, mã vạch, danh mục..."
+                         PlaceholderText="Tìm kiếm sản phẩm, mã vạch, danh mục..."
                          Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          TextChanged="SearchBox_TextChanged"
                          Background="Transparent"
@@ -64,6 +64,132 @@
                          FontSize="15"/>
             </Border>
         </Border>
+
+        <!-- Empty State -->
+        <Grid x:Name="EmptyStateGrid"
+              Grid.Row="2" 
+              Visibility="Collapsed"
+              Padding="40,60">
+            <StackPanel HorizontalAlignment="Center" 
+                       VerticalAlignment="Center" 
+                       Spacing="28"
+                       MaxWidth="380">
+                
+                <!-- Animated Icon Container -->
+                <Grid>
+                    <Border Background="{ThemeResource PrimaryContainerBrush}"
+                           CornerRadius="80"
+                           Width="160"
+                           Height="160"
+                           HorizontalAlignment="Center"
+                           Opacity="0.15"/>
+                    <Border Background="{ThemeResource PrimaryContainerBrush}"
+                           CornerRadius="70"
+                           Width="140"
+                           Height="140"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Opacity="0.25"/>
+                    <Border Background="{ThemeResource PrimaryContainerBrush}"
+                           CornerRadius="60"
+                           Width="120"
+                           Height="120"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE721;" 
+                                 FontSize="64" 
+                                 Foreground="{ThemeResource PrimaryBrush}"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"/>
+                    </Border>
+                </Grid>
+                
+                <!-- Title & Description -->
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Không tìm thấy sản phẩm" 
+                              FontSize="24"
+                              FontWeight="Bold"
+                              Foreground="{ThemeResource OnSurfaceBrush}"
+                              HorizontalAlignment="Center"
+                              TextAlignment="Center"/>
+                    
+                    <TextBlock Text="Không có sản phẩm nào khớp với từ khóa tìm kiếm của bạn" 
+                              FontSize="15"
+                              Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                              HorizontalAlignment="Center"
+                              TextAlignment="Center"
+                              TextWrapping="Wrap"
+                              LineHeight="24"
+                              Opacity="0.9"/>
+                </StackPanel>
+                
+                <!-- Suggestions Card -->
+                <Border Background="{ThemeResource SurfaceVariantBrush}"
+                       CornerRadius="16"
+                       Padding="20,18"
+                       HorizontalAlignment="Stretch">
+                    <StackPanel Spacing="14">
+                        <TextBlock Text="💡 Gợi ý tìm kiếm" 
+                                  FontSize="14"
+                                  FontWeight="SemiBold"
+                                  Foreground="{ThemeResource OnSurfaceBrush}"/>
+                        
+                        <StackPanel Spacing="10">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Grid.Column="0" 
+                                       Background="{ThemeResource PrimaryContainerBrush}"
+                                       CornerRadius="12"
+                                       Width="24" Height="24"
+                                       Padding="4">
+                                    <FontIcon Glyph="&#xE73E;" 
+                                             FontSize="10"
+                                             Foreground="{ThemeResource PrimaryBrush}"/>
+                                </Border>
+                                <TextBlock Grid.Column="1" 
+                                          Text="Kiểm tra chính tả từ khóa"
+                                          FontSize="13"
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                                          VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Grid.Column="0" 
+                                       Background="{ThemeResource SecondaryContainerBrush}"
+                                       CornerRadius="12"
+                                       Width="24" Height="24"
+                                       Padding="4">
+                                    <FontIcon Glyph="&#xE8F4;" 
+                                             FontSize="10"
+                                             Foreground="{ThemeResource SecondaryBrush}"/>
+                                </Border>
+                                <TextBlock Grid.Column="1" 
+                                          Text="Thử từ khóa ngắn gọn hơn"
+                                          FontSize="13"
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                                          VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Grid.Column="0" 
+                                       Background="{ThemeResource TertiaryContainerBrush}"
+                                       CornerRadius="12"
+                                       Width="24" Height="24"
+                                       Padding="4">
+                                    <FontIcon Glyph="&#xE8B7;" 
+                                             FontSize="10"
+                                             Foreground="{ThemeResource TertiaryBrush}"/>
+                                </Border>
+                                <TextBlock Grid.Column="1" 
+                                          Text="Tìm theo mã vạch hoặc danh mục"
+                                          FontSize="13"
+                                          Foreground="{ThemeResource OnSurfaceVariantBrush}"
+                                          VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
 
         <!-- Product ListView with improved cards -->
         <ListView Grid.Row="2"
@@ -199,23 +325,6 @@
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
-
-            <ListView.Footer>
-                <Grid Height="200" Visibility="{Binding Products.Count, Converter={StaticResource EmptyToVisibilityConverter}}">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
-                        <FontIcon Glyph="&#xE7C4;" FontSize="56" Foreground="{ThemeResource OnSurfaceVariantBrush}" Opacity="0.4"/>
-                        <TextBlock Text="Không tìm thấy sản phẩm" 
-                                  FontSize="17"
-                                  FontWeight="SemiBold"
-                                  Foreground="{ThemeResource OnSurfaceVariantBrush}"
-                                  HorizontalAlignment="Center"/>
-                        <Button Content="Tải lại" 
-                               Command="{Binding LoadDataCommand}"
-                               Style="{ThemeResource AccentButtonStyle}"
-                               Padding="24,10"/>
-                    </StackPanel>
-                </Grid>
-            </ListView.Footer>
         </ListView>
 
         <!-- Bottom Navigation Bar with elevation -->
