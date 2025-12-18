@@ -77,7 +77,13 @@ public sealed partial class MainPage : Page
         base.OnNavigatedTo(e);
         Console.WriteLine("🔵 OnNavigatedTo called");
 
-        // ✅ SỬA LẠI CÁCH LẤY SERVICE
+        // ✅ RESET EmptyStateGrid về Collapsed ngay khi navigate đến
+        if (EmptyStateGrid != null)
+        {
+            EmptyStateGrid.Visibility = Visibility.Collapsed;
+            Console.WriteLine("🔄 EmptyStateGrid reset to Collapsed");
+        }
+
         try
         {
             if (Application.Current is App app && app.Host != null)
@@ -88,6 +94,7 @@ public sealed partial class MainPage : Page
                 if (_viewModel != null)
                 {
                     _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+                    _viewModel.Products.CollectionChanged -= Products_CollectionChanged;
                 }
                 
                 _viewModel = app.Host.Services.GetService<MainModel>();
@@ -100,12 +107,18 @@ public sealed partial class MainPage : Page
                     // Subscribe để update badge khi cart count thay đổi
                     _viewModel.PropertyChanged += ViewModel_PropertyChanged;
                     
+                    // ✅ Subscribe để update empty state khi Products thay đổi
+                    _viewModel.Products.CollectionChanged += Products_CollectionChanged;
+                    
                     // Force load cart count từ service
                     await _viewModel.RefreshCartCountAsync();
                     Console.WriteLine($"✅ After refresh, CartItemCount: {_viewModel.CartItemCount}");
                     
                     // Update badge ngay
                     UpdateCartBadge();
+                    
+                    // ✅ Update empty state sau khi ViewModel setup xong
+                    UpdateEmptyState();
                     
                     // Apply pending search nếu có
                     if (!string.IsNullOrEmpty(_pendingSearchText))
@@ -130,6 +143,12 @@ public sealed partial class MainPage : Page
         {
             Console.WriteLine($"❌ OnNavigatedTo Error: {ex.Message}");
         }
+    }
+    
+    private void Products_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        // ✅ Update empty state on UI thread when Products collection changes
+        DispatcherQueue.TryEnqueue(() => UpdateEmptyState());
     }
     
     private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -239,11 +258,19 @@ public sealed partial class MainPage : Page
     
     private void UpdateEmptyState()
     {
-        if (_viewModel != null && EmptyStateGrid != null)
+        if (_viewModel != null && EmptyStateGrid != null && ProductListView != null)
         {
             bool isEmpty = _viewModel.Products.Count == 0;
-            EmptyStateGrid.Visibility = isEmpty ? Visibility.Visible : Visibility.Collapsed;
-            Console.WriteLine($"📊 Empty state: {EmptyStateGrid.Visibility}, Products: {_viewModel.Products.Count}");
+            bool hasSearchText = !string.IsNullOrWhiteSpace(_viewModel.SearchText);
+            
+            // ✅ Chỉ hiển thị EmptyState khi có search text VÀ không có kết quả
+            // Nếu không có search text, không hiển thị EmptyState (đang loading hoặc chưa search)
+            bool showEmptyState = isEmpty && hasSearchText;
+            
+            EmptyStateGrid.Visibility = showEmptyState ? Visibility.Visible : Visibility.Collapsed;
+            ProductListView.Visibility = showEmptyState ? Visibility.Collapsed : Visibility.Visible;
+            
+            Console.WriteLine($"📊 Empty state: {EmptyStateGrid.Visibility}, Products: {_viewModel.Products.Count}, SearchText: '{_viewModel.SearchText}'");
         }
     }
 
